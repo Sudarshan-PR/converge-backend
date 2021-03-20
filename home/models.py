@@ -22,4 +22,3 @@ class Posts(models.Model):
     image = models.ImageField()
     title = models.CharField(max_length=30)
     desc = models.CharField(max_length=150)
-
