@@ -16,8 +16,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         blank=False,
     )
 
-    # All these field declarations are copied as-is
-    # from `AbstractUser`
     first_name = models.CharField(
         _('first name'),
         max_length=30,
@@ -37,7 +35,7 @@ class User(AbstractBaseUser, PermissionsMixin):
             'this admin site.'
         ),
     )
-    
+
     is_active = models.BooleanField(
         _('active'),
         default=True,
@@ -51,8 +49,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         _('date joined'),
         default=timezone.now,
     )
-
-    # Add additional fields here if needed
 
     objects = UserManager()
 
