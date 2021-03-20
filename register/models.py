@@ -1,9 +1,59 @@
 from django.db import models
-from django.contrib.auth.models import User
+
+from django.utils import timezone
+from django.contrib.auth.base_user import AbstractBaseUser
+from django.contrib.auth.models import PermissionsMixin
+from django.utils.translation import ugettext_lazy as _
+
+from .user_manager import UserManager
 
 
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    bio = models.TextField(blank=True)
-    dob = models.DateField(blank=True, null=True, auto_now=False, auto_now_add=False)
-    location = models.CharField(blank=True, max_length=50)
+class User(AbstractBaseUser, PermissionsMixin):
+
+    email = models.EmailField(
+        unique=True,
+        max_length=255,
+        blank=False,
+    )
+
+    # All these field declarations are copied as-is
+    # from `AbstractUser`
+    first_name = models.CharField(
+        _('first name'),
+        max_length=30,
+        blank=True,
+    )
+    last_name = models.CharField(
+        _('last name'),
+        max_length=150,
+        blank=True,
+    )
+
+    is_staff = models.BooleanField(
+        _('staff status'),
+        default=False,
+        help_text=_(
+            'Designates whether the user can log into '
+            'this admin site.'
+        ),
+    )
+    
+    is_active = models.BooleanField(
+        _('active'),
+        default=True,
+        help_text=_(
+            'Designates whether this user should be '
+            'treated as active. Unselect this instead '
+            'of deleting accounts.'
+        ),
+    )
+    date_joined = models.DateTimeField(
+        _('date joined'),
+        default=timezone.now,
+    )
+
+    # Add additional fields here if needed
+
+    objects = UserManager()
+
+    USERNAME_FIELD = 'email'

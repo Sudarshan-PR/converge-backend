@@ -30,9 +30,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG")
+if os.getenv("DEBUG") == "True":
+    DEBUG = True
+else:
+    DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+]
 
 
 # Application definition
@@ -46,6 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'home',
+    'register',
 
     'rest_framework',
 ]
@@ -133,10 +140,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = 'static/'
 
 #
 # Additional settings 
 #
+
+AUTH_USER_MODEL = 'register.User'
 
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.Argon2PasswordHasher',
@@ -146,9 +156,6 @@ PASSWORD_HASHERS = [
 ]
 
 REST_FRAMEWORK = {
-    'DEAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
