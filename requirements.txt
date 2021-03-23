@@ -10,7 +10,6 @@ djangorestframework-simplejwt==4.6.0
 gunicorn==20.0.4
 jmespath==0.10.0
 Pillow==8.1.2
-pip-autoremove==0.9.1
 psycopg2==2.8.6
 pycparser==2.20
 PyJWT==2.0.1
