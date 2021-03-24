@@ -165,6 +165,7 @@ AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_KEY')
 AWS_STORAGE_BUCKET_NAME = os.getenv('S3_BUCKET_NAME')
 AWS_S3_REGION_NAME = os.getenv('AWS_REGION_NAME')
 
+# Uploaded media path 
 PUBLIC_MEDIA_LOCATION = 'media'
 
 # Activate Django-Heroku.
