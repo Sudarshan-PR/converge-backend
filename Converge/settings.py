@@ -12,8 +12,8 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Geos Django library URLs
-GEOS_LIBRARY_PATH = os.getenv('GEOS_LIBRARY_PATH')
-GDAL_LIBRARY_PATH = os.getenv('GDAL_LIBRARY_PATH')
+# GEOS_LIBRARY_PATH = os.getenv('GEOS_LIBRARY_PATH')
+# GDAL_LIBRARY_PATH = os.getenv('GDAL_LIBRARY_PATH')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("SECRET_KEY")
