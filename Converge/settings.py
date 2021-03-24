@@ -1,4 +1,5 @@
 import os
+import django_heroku
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -165,3 +166,6 @@ AWS_STORAGE_BUCKET_NAME = os.getenv('S3_BUCKET_NAME')
 AWS_S3_REGION_NAME = os.getenv('AWS_REGION_NAME')
 
 PUBLIC_MEDIA_LOCATION = 'media'
+
+# Activate Django-Heroku.
+django_heroku.settings(locals())
