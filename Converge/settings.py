@@ -170,3 +170,6 @@ PUBLIC_MEDIA_LOCATION = 'media'
 
 # Activate Django-Heroku.
 django_heroku.settings(locals())
+
+# Set database engine to postgis
+DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
