@@ -11,6 +11,9 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Converge.settings')
+if os.getenv("ENV") == "Heroku":
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Converge.production_settings')
+else:
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Converge.dev_settings')
 
 application = get_wsgi_application()
