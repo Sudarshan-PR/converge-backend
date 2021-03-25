@@ -9,8 +9,9 @@ def main():
 
     if os.getenv("ENV") == "Heroku":
         os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Converge.production_settings')
-    else
+    else:
         os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Converge.dev_settings')
+
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
