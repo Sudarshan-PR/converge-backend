@@ -13,7 +13,7 @@ from .serializers import ProfileSerializer, PostSerializer
 from .models import Profile, Posts
 
 class HelloView(APIView):
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         content = {"msg": "Hello, you are in!"}
