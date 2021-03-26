@@ -14,7 +14,7 @@ class UserRegisterView(APIView):
             if user:
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             
-            return Response(serializer.data, status=502)
+            return Response(serializer.data, status=status.HTTP_502_BAD_GATEWAY)
 
-        return Response(serializer.data, status=400)
+        return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
             
