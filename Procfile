@@ -1,2 +1,3 @@
-web: gunicorn Converge.wsgi
+release: python manage.py migrate
 
+web: gunicorn Converge.wsgi
