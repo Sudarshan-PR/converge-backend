@@ -25,6 +25,7 @@ class ProfileView(APIView):
 
     def post(self, request):
         data = request.data
+        data._mutable = True
         data['user'] = request.user.id
         # data['location'] = Point(data['location'])
         serializer = ProfileSerializer(data=data)
