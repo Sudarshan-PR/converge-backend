@@ -37,7 +37,15 @@ class ProfileView(APIView):
 
     def get(self, request):
         profile = Profile.objects.get(user=request.user.id) 
+        
+        # Test if profile image exists
+        try:
+            image = profile.image.url
+        except:
+            image = "null"
+
         data = {
+            'image': image,
             'email': profile.user.email,
             'dob': profile.dob,
             'bio': profile.bio,
@@ -48,8 +56,6 @@ class ProfileView(APIView):
             'tags': profile.tags,
         }
         
-        # return JsonResponse(json_loads(response), safe=False)
-
         return Response(data)
 
 class PostsView(APIView):

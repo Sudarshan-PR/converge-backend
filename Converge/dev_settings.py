@@ -147,8 +147,8 @@ REST_FRAMEWORK = {
 
 # JWT Refresh Token lifetime settings
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=15),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=90),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=95),
     'ROTATE_REFRESH_TOKENS': True,
 }
 

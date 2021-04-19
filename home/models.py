@@ -14,11 +14,11 @@ class Posts(models.Model):
 # User Profile Model
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    image = models.ImageField(blank=True)
     tags = ArrayField(models.CharField(max_length=15))
     bio = models.TextField(max_length=100, blank=True)
     dob = models.DateField(blank=True, null=True, auto_now=False, auto_now_add=False)
     location = models.PointField()
-    # last_viewed_post = models.ForeignKey(Posts)
 
     def __str__(self):
         return self.user.email
