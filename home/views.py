@@ -26,7 +26,7 @@ class ProfileView(APIView):
     def post(self, request):
         data = request.data
         data['user'] = request.user.id
-        data['location'] = Point(data['location'])
+        # data['location'] = Point(data['location'])
         serializer = ProfileSerializer(data=data)
         
         if serializer.is_valid():
@@ -45,14 +45,12 @@ class ProfileView(APIView):
             image = "null"
 
         data = {
-            'image': image,
+            'first_name': request.user.first_name,
+            'last_name': request.user.last_name,
+            'profile_picture': image,
             'email': profile.user.email,
             'dob': profile.dob,
             'bio': profile.bio,
-            'location': {
-                'lat': profile.location.coords[0],
-                'lon': profile.location.coords[1],
-                },
             'tags': profile.tags,
         }
         

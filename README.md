@@ -22,5 +22,5 @@ Install PostGIS extension in PostgreSQL for Geo Objects support.
 | /api/token/         	| POST   	| Get a pair of JWT tokens (Login)     	| email, password                                    	|
 | /api/token/refresh/ 	| POST   	| Get new Access token (Token Refresh) 	| refresh                                            	|
 | /api/profile/       	| GET    	| Get profile info if available        	| -                                                  	|
-| /api/profile/       	| POST   	| Create a profile                     	| dob, bio, tags[array<str>], location[array<float>] 	|
+| /api/profile/       	| POST   	| Create a profile                     	| image, dob, bio, tags[array<str>], location[array<float>] 	|
 | /api/post/          	| POST   	| Create a new post(blog thingy)       	| image, title, desc                                 	|
