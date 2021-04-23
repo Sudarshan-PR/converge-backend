@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-from .serializers import ProfileSerializer, PostSerializer
+from .serializers import ProfileSerializer, PostSerializer, ProfileUpdateSerializer
 from .models import Profile, Posts
 
 class HelloView(APIView):
@@ -23,17 +23,15 @@ class HelloView(APIView):
 class ProfileView(APIView):
     permisson_classes = (IsAuthenticated,)
 
-    def post(self, request):
+    def put(self, request):
         data = request.data
-        data._mutable = True
-        data['user'] = request.user.id
-        # data['location'] = Point(data['location'])
+
         serializer = ProfileSerializer(data=data)
-        
+       
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        
+            profile = serializer.save(request.user.id)
+            
+            return Response({'user': request.user.id, 'image':profile.image.url})
         return Response(serializer.errors)
 
     def get(self, request):
@@ -43,7 +41,7 @@ class ProfileView(APIView):
         try:
             image = profile.image.url
         except:
-            image = "null"
+            image = None
 
         data = {
             'first_name': request.user.first_name,
@@ -53,6 +51,7 @@ class ProfileView(APIView):
             'dob': profile.dob,
             'bio': profile.bio,
             'tags': profile.tags,
+            'location': [profile.location.x, profile.location.y]
         }
         
         return Response(data)
