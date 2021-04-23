@@ -21,6 +21,18 @@ Install PostGIS extension in PostgreSQL for Geo Objects support.
 | /api/register/      	| POST   	| Register a new user                  	| email, password, first_name, last_name             	|
 | /api/token/         	| POST   	| Get a pair of JWT tokens (Login)     	| email, password                                    	|
 | /api/token/refresh/ 	| POST   	| Get new Access token (Token Refresh) 	| refresh                                            	|
-| /api/profile/       	| GET    	| Get profile info if available        	| -                                                  	|
-| /api/profile/       	| POST   	| Create a profile                     	| image, dob, bio, tags[array<str>], location[array<float>] 	|
+| /api/profile/       	| GET    	| Get profile data       	            | -                                                  	|
+| /api/profile/       	| PUT   	| Create/Update your profile            | image, dob, bio, tags[array<str>], location[array<float>] 	|
 | /api/post/          	| POST   	| Create a new post(blog thingy)       	| image, title, desc                                 	|
+
+Parameters Description: _datatypes within sqared brackets[]_
++ `email`: Email address [string]
++ `password`: 8+ characters [string]
++ `refresh`: Refresh token obtained after POST /api/token/ [string]
++ `image`: Image File to be uploaded [file]
++ `dob`: Date Of Birth. (yyyy-mm-dd) [date/string]
++ `bio`: Biography [string]
++ `tags`: Array of strings. [array<string>] eg: ['ski', 'boating', 'gaming']
++ `location`: Array of floating points. (x-axis, y-axis) [array<float>] eg: [12.885151, 74.825905]
++ `title`: Title of the post [string]
++ `desc`: Post body [string]
