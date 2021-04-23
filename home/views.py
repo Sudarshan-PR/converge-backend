@@ -29,9 +29,9 @@ class ProfileView(APIView):
         serializer = ProfileSerializer(data=data)
        
         if serializer.is_valid():
-            profile = serializer.save(request.user.id)
-            
-            return Response({'user': request.user.id, 'image':profile.image.url})
+            profile = serializer.save(request.user.id)            
+            return Response({'msg': 'Profile has been updated!','user': request.user.id})
+
         return Response(serializer.errors)
 
     def get(self, request):
