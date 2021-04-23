@@ -25,9 +25,9 @@ class ProfileSerializer(serializers.ModelSerializer):
         profile = Profile.objects.get(user=userid)
 
         for key, value in data.items():
-            if key is 'location':
+            if key == 'location':
                 value = Point(value)
-                
+
             setattr(profile, key, value)
 
         profile.save()
