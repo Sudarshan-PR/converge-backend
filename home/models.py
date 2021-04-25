@@ -20,7 +20,7 @@ class Profile(models.Model):
     tags = ArrayField(models.CharField(max_length=15), blank=True, null=True)
     bio = models.TextField(max_length=100, blank=True)
     dob = models.DateField(blank=True, null=True, auto_now=False, auto_now_add=False)
-    location = models.PointField(blank=True)
+    location = models.PointField(blank=True, null=True)
 
     def __str__(self):
         return self.user.email
