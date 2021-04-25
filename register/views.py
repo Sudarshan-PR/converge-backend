@@ -20,7 +20,7 @@ class UserRegisterView(APIView):
             if user:
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             
-            return Response(serializer.data, status=status.HTTP_502_BAD_GATEWAY)
+            return Response({'Error': "Something is wrong in the server. Please try again"}, status=status.HTTP_502_BAD_GATEWAY)
 
-        return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             
