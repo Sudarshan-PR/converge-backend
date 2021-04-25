@@ -43,6 +43,12 @@ class ProfileView(APIView):
         except:
             image = None
 
+        # Test is coordinates are present
+        try:
+            loc = [profile.location.x, profile.location.y]
+        except:
+            loc = None
+        
         data = {
             'first_name': request.user.first_name,
             'last_name': request.user.last_name,
@@ -51,7 +57,7 @@ class ProfileView(APIView):
             'dob': profile.dob,
             'bio': profile.bio,
             'tags': profile.tags,
-            'location': [profile.location.x, profile.location.y]
+            'location': loc
         }
         
         return Response(data)
