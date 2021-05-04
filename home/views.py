@@ -2,15 +2,18 @@ from json import loads as json_loads
 
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
-from django.core import serializers
+from django.core import serializers as dj_serializers
 from django.contrib.gis.geos import Point
 
 from rest_framework.views import APIView
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
 from .serializers import ProfileSerializer, PostSerializer, ProfileUpdateSerializer
 from .models import Profile, Posts
+from register.models import User
+from register.serializer import UserRegisterSerializer
 
 class HelloView(APIView):
     # permission_classes = (IsAuthenticated,)
@@ -29,38 +32,53 @@ class ProfileView(APIView):
         serializer = ProfileSerializer(data=data)
        
         if serializer.is_valid():
-            profile = serializer.save(request.user.id)            
-            return Response({'msg': 'Profile has been updated!','user': request.user.id})
+            profile = serializer.save(request.user.id)
+            
+            profile = ProfileSerializer(profile)
+
+            msg = {'msg': 'Profile has been updated!','user': request.user.id}
+            resp = dict(profile.data, **msg)
+            
+            return Response(resp)
 
         return Response(serializer.errors)
 
     def get(self, request):
-        profile = Profile.objects.get(user=request.user.id) 
-        
-        # Test if profile image exists
-        try:
-            image = profile.image.url
-        except:
-            image = None
+        profile = Profile.objects.get(user=request.user.id)
 
         # Test is coordinates are present
         try:
             loc = [profile.location.x, profile.location.y]
-        except:
-            loc = None
-        
-        data = {
-            'first_name': request.user.first_name,
-            'last_name': request.user.last_name,
-            'profile_picture': image,
-            'email': profile.user.email,
-            'dob': profile.dob,
-            'bio': profile.bio,
-            'tags': profile.tags,
-            'location': loc
-        }
-        
-        return Response(data)
+        except Exception as e:
+            loc = str(e)
+
+        profile = ProfileSerializer(profile)
+        user = UserRegisterSerializer(request.user)
+
+        # Test if profile image exists
+        # try:
+        #     image = profile.image.url
+        # except:
+        #     image = None
+
+        profile = dict(profile.data, **user.data)
+        profile['location'] = loc 
+
+        return Response(profile)
+
+@api_view()
+def get_user_profile(request, userid):
+    user = User.objects.get(id=userid)
+    profile = Profile.objects.get(user=userid)
+
+    user = UserRegisterSerializer(user)
+    profile = ProfileSerializer(profile)
+
+    profile = dict(profile.data, **user.data)
+    del profile['location']
+
+    return Response(profile)
+
 
 class PostsView(APIView):
     def get(self, request):
