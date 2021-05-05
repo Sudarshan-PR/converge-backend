@@ -5,6 +5,8 @@ from django.contrib.gis.geos import Point
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
+from event.models import Events 
+
 
 # Posts Model
 class Posts(models.Model):
@@ -21,6 +23,7 @@ class Profile(models.Model):
     bio = models.TextField(max_length=100, blank=True)
     dob = models.DateField(blank=True, null=True, auto_now=False, auto_now_add=False)
     location = models.PointField(blank=True, null=True)
+    invites = models.ManyToManyField(Events)
 
     def __str__(self):
         return self.user.email

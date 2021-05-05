@@ -1,8 +1,4 @@
-from json import loads as json_loads
-
-from django.shortcuts import render
-from django.http import JsonResponse, HttpResponse
-from django.core import serializers as dj_serializers
+from django.http import HttpResponse
 from django.contrib.gis.geos import Point
 
 from rest_framework.views import APIView
@@ -10,7 +6,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-from .serializers import ProfileSerializer, PostSerializer, ProfileUpdateSerializer
+from .serializers import ProfileSerializer, PostSerializer
 from .models import Profile, Posts
 from register.models import User
 from register.serializer import UserRegisterSerializer
