@@ -23,7 +23,7 @@ Install PostGIS extension in PostgreSQL for Geo Objects support.
 | /api/token/refresh/ 	| POST   	| Get new Access token (Token Refresh) 	| refresh                                            	|
 | /api/profile/       	| GET    	| Get profile data       	            | -                                                  	|
 | /api/profile/       	| PUT   	| Create/Update your profile            | image, dob, bio, tags[array<str>], location[array<float>] 	|
-| /api/profile/\<userid\> | GET    	| Get specific user's profile           | - (\<userid\> must be replaced with an integer value)   |
+| /api/profile/\<userid\> | GET    	| Get specific user's profile           | - (\<userid\> must be replaced with an integer value) |
 | /api/post/          	| POST   	| Create a new post(blog thingy)       	| image, title, desc                                 	|
 
 Parameters Description: _datatypes within sqared brackets[]_
