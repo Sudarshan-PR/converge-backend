@@ -36,6 +36,7 @@ INSTALLED_APPS = [
 
     'home',
     'register',
+    'event',
 
     'rest_framework',
     'storages',
