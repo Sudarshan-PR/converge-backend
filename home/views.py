@@ -1,10 +1,12 @@
 from django.http import HttpResponse
 from django.contrib.gis.geos import Point
+from django.core.exceptions import ObjectDoesNotExist
 
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
 
 from .serializers import ProfileSerializer, PostSerializer
 from .models import Profile, Posts
@@ -40,8 +42,7 @@ class ProfileView(APIView):
         return Response(serializer.errors)
 
     def get(self, request):
-        profile = Profile.objects.get(user=request.user.id)
-
+        profile = Profile.objects.get(user=request.user.id)        
         # Test is coordinates are present
         try:
             loc = [profile.location.x, profile.location.y]
@@ -65,7 +66,10 @@ class ProfileView(APIView):
 @api_view()
 def get_user_profile(request, userid):
     user = User.objects.get(id=userid)
-    profile = Profile.objects.get(user=userid)
+    try:
+        profile = Profile.objects.get(user=userid)
+    except ObjectDoesNotExist:
+        return Response({'error': f'Profile for UserID: {userid} does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
     user = UserRegisterSerializer(user)
     profile = ProfileSerializer(profile)

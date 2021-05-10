@@ -1,10 +1,13 @@
 from django.contrib.gis.geos import Point
+from rest_framework import status
 
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
+from .models import Events
+from .serializers import EventCreateSerializer, EventGetSerializer
 
 class EventView(APIView):
     permisson_classes = (IsAuthenticated,)
@@ -12,19 +15,14 @@ class EventView(APIView):
     def post(self, request):
         data = request.data
 
-        serializer = ProfileSerializer(data=data)
+        serializer = EventCreateSerializer(data=data)
        
         if serializer.is_valid():
-            profile = serializer.save(request.user.id)
+            serializer.save(host=request.user)
             
-            profile = ProfileSerializer(profile)
+            return Response(serializer.data)
 
-            msg = {'msg': 'Profile has been updated!','user': request.user.id}
-            resp = dict(profile.data, **msg)
-            
-            return Response(resp)
-
-        return Response(serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request):
         data = request.data
@@ -43,26 +41,25 @@ class EventView(APIView):
 
         return Response(serializer.errors)
 
-    def get(self, request):
-        profile = Profile.objects.get(user=request.user.id)
-
-        # Test is coordinates are present
+    def patch(self, request, id):
+        data = request.data
         try:
-            loc = [profile.location.x, profile.location.y]
-        except Exception as e:
-            loc = str(e)
+            event = Events.objects.get(id=id)
+        except ObjectDoesNotExist:
+            return Response({'error': f'Event with ID: {id} does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        
+        if request.user == event.host:
+            return Response({'perm': 'is_permitted'})
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        
 
-        profile = ProfileSerializer(profile)
-        user = UserRegisterSerializer(request.user)
+    def get(self, request, id):
+        event = None
+        try:
+            event = Events.objects.get(id=id)
+        except ObjectDoesNotExist:
+            return Response({'error': f'Event with ID: {id} does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
-        # Test if profile image exists
-        # try:
-        #     image = profile.image.url
-        # except:
-        #     image = None
-
-        profile = dict(profile.data, **user.data)
-        profile['location'] = loc 
-
-        return Response(profile)
-
+        event = EventGetSerializer(event)
+        return Response(event.data)
