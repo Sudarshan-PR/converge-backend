@@ -22,8 +22,10 @@ Install PostGIS extension in PostgreSQL for Geo Objects support.
 | /api/token/         	| POST   	| Get a pair of JWT tokens (Login)     	| email, password                                    	|
 | /api/token/refresh/ 	| POST   	| Get new Access token (Token Refresh) 	| refresh                                            	|
 | /api/profile/       	| GET    	| Get profile data       	            | -                                                  	|
-| /api/profile/       	| PUT   	| Create/Update your profile            | image, dob, bio, tags[array<str>], location[array<float>] 	|
+| /api/profile/       	| PUT   	| Create/Update your profile            | image, dob(yyyy-mm-dd), bio, tags[array<str>], location[array<float>] 	|
 | /api/profile/\<userid\> | GET    	| Get specific user's profile           | - (\<userid\> must be replaced with an integer value) |
+| /api/post/          	| POST   	| Create a new post(blog thingy)       	| image, title, desc                                 	|
+| /api/event/          	| POST   	| Create a new event                   	| image, title, desc, event_date(yyyy-mm-dd), addr, location[array<float>], tags[array<str>], max_attendees | 
 | /api/post/          	| POST   	| Create a new post(blog thingy)       	| image, title, desc                                 	|
 
 Parameters Description: _datatypes within sqared brackets[]_
@@ -37,3 +39,6 @@ Parameters Description: _datatypes within sqared brackets[]_
 + `location`: Array of floating points. (x-axis, y-axis) [array<float>] eg: [12.885151, 74.825905]
 + `title`: Title of the post [string]
 + `desc`: Post body [string]
++ `event_date`: Date with formate (yyyy-mm-dd)
++ `addr`: Address of event. [string]
++ `max_attendees`: Interger field [int]
