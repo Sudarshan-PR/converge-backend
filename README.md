@@ -26,6 +26,7 @@ Install PostGIS extension in PostgreSQL for Geo Objects support.
 | /api/profile/\<userid\> | GET    	| Get specific user's profile           | - (\<userid\> must be replaced with an integer value) |
 | /api/post/          	| POST   	| Create a new post(blog thingy)       	| image, title, desc                                 	|
 | /api/event/          	| POST   	| Create a new event                   	| image, title, desc, event_date(yyyy-mm-dd), addr, location[array<float>], tags[array<str>], max_attendees | 
+| /api/event/          	| GET   	| Get all available events              | -                                                     | 
 | /api/post/          	| POST   	| Create a new post(blog thingy)       	| image, title, desc                                 	|
 
 Parameters Description: _datatypes within sqared brackets[]_
