@@ -8,6 +8,7 @@ class EventCreateSerializer(serializers.ModelSerializer):
         model = Events
         exclude = ['host','attendees']
 
+
 class EventGetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Events

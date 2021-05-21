@@ -1,6 +1,6 @@
 from django.contrib.gis.geos import Point
+from django.utils import timezone
 from rest_framework import status
-
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -8,6 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from .models import Events
 from .serializers import EventCreateSerializer, EventGetSerializer
+
 
 class EventView(APIView):
     permisson_classes = (IsAuthenticated,)
@@ -47,19 +48,38 @@ class EventView(APIView):
             event = Events.objects.get(id=id)
         except ObjectDoesNotExist:
             return Response({'error': f'Event with ID: {id} does not exist'}, status=status.HTTP_404_NOT_FOUND)
-        
+
         if request.user == event.host:
             return Response({'perm': 'is_permitted'})
         else:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         
+    # def get(self, request, id):
+    #     event = None
+    #     try:
+    #         event = Events.objects.get(id=id)
+    #     except ObjectDoesNotExist:
+    #         return Response({'error': f'Event with ID: {id} does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
-    def get(self, request, id):
-        event = None
-        try:
-            event = Events.objects.get(id=id)
-        except ObjectDoesNotExist:
-            return Response({'error': f'Event with ID: {id} does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    #     event = EventGetSerializer(event)
+    #     return Response(event.data)
 
-        event = EventGetSerializer(event)
-        return Response(event.data)
+    def get(self, request):
+        now = timezone.localdate()
+
+        events = Events.objects.filter(event_date__gte=now).order_by('event_date')
+
+        # If events is empty return
+        if not(events):
+            return Response({'msg': f'Sorry there are no upcoming events.'})
+
+        events = EventGetSerializer(events, many=True)
+        return Response(events.data)
+
+@api_view
+def add_attendees(request, id):
+    event = Events.objects.get(id=id)
+    
+    event.attendees.add(request.user)
+
+    return Response({"msg": "Succefully accepted invite"})
