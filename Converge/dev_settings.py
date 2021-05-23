@@ -78,6 +78,10 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
+                # Social
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -162,8 +166,6 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',  
         'drf_social_oauth2.authentication.SocialAuthentication',
-
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
 }
 
@@ -184,3 +186,6 @@ AWS_S3_REGION_NAME = os.getenv('AWS_REGION_NAME')
 
 # Uploaded media path 
 PUBLIC_MEDIA_LOCATION = 'media'
+
+# klkjlk
+DEFAULT_AUTO_FIELD='django.db.models.AutoField'

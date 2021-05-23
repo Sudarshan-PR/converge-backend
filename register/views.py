@@ -7,7 +7,7 @@ from .serializer import UserRegisterSerializer
 from home.models import Profile
 
 class UserRegisterView(APIView):
-    def post(self, request, format='json'):
+    def post(self, request):
         serializer = UserRegisterSerializer(data=request.data)
 
         if serializer.is_valid():

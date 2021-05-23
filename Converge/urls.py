@@ -26,12 +26,12 @@ from register.views import UserRegisterView
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    # path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    # path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/register/', UserRegisterView.as_view(), name='register_user'),
 
-    # path('api-auth/', include('rest_framework.urls')),
-    # path('api-auth/', include('drf_social_oauth2.urls',namespace='drf')),
+    path('api/', include('rest_framework.urls')),
+    path('api/', include('drf_social_oauth2.urls',namespace='drf')),
 
     path('api/', include('home.urls')),
 
