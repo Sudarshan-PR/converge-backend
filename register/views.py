@@ -2,11 +2,14 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework import permissions
 from .serializer import UserRegisterSerializer
 
 from home.models import Profile
 
 class UserRegisterView(APIView):
+    permission_classes = [permissions.AllowAny]
+    
     def post(self, request):
         serializer = UserRegisterSerializer(data=request.data)
 

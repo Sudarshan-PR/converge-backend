@@ -29,9 +29,11 @@ ALLOWED_HOSTS = [
 
 INSTALLED_APPS = [
     'django.contrib.admin',
+    'django.contrib.sessions',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.messages',
+    'django.contrib.staticfiles',
 
     # Django geos
     'django.contrib.gis',
@@ -143,7 +145,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_ROOT = 'static/'
-
+STATIC_URL = '/static/'
 #
 # Additional settings 
 #
