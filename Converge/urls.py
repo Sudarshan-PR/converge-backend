@@ -30,6 +30,9 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/register/', UserRegisterView.as_view(), name='register_user'),
 
+    # path('api-auth/', include('rest_framework.urls')),
+    # path('api-auth/', include('drf_social_oauth2.urls',namespace='drf')),
+
     path('api/', include('home.urls')),
 
     path('api/event/', include('event.urls')),

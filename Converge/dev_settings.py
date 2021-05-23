@@ -33,14 +33,24 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.messages',
 
+    # Django geos
     'django.contrib.gis',
 
+    # Local apps
     'home',
     'register',
     'event',
 
+    # DRF
     'rest_framework',
+
+    # S3 Buckets 
     'storages',
+
+    # Social signin
+    'oauth2_provider',
+    'social_django',
+    'drf_social_oauth2',
 ]
 
 MIDDLEWARE = [
@@ -51,6 +61,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'Converge.urls'
@@ -117,6 +129,7 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
+
 USE_L10N = True
 
 USE_TZ = True
@@ -140,8 +153,16 @@ PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
 ]
 
+AUTHENTICATION_BACKENDS = (  
+  'drf_social_oauth2.backends.DjangoOAuth2',
+  'django.contrib.auth.backends.ModelBackend',
+)
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',  
+        'drf_social_oauth2.authentication.SocialAuthentication',
+
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
 }

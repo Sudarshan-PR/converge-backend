@@ -43,27 +43,13 @@ class EventView(APIView):
         return Response(serializer.errors)
 
     def patch(self, request, id):
-        data = request.data
-        try:
-            event = Events.objects.get(id=id)
-        except ObjectDoesNotExist:
-            return Response({'error': f'Event with ID: {id} does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        event = Events.objects.get(id=id)
+            
+        event.attendees.add(request.user)
 
-        if request.user == event.host:
-            return Response({'perm': 'is_permitted'})
-        else:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        event = EventGetSerializer(event)
+        return Response(event.data)
         
-    # def get(self, request, id):
-    #     event = None
-    #     try:
-    #         event = Events.objects.get(id=id)
-    #     except ObjectDoesNotExist:
-    #         return Response({'error': f'Event with ID: {id} does not exist'}, status=status.HTTP_404_NOT_FOUND)
-
-    #     event = EventGetSerializer(event)
-    #     return Response(event.data)
-
     def get(self, request):
         now = timezone.localdate()
 
@@ -76,10 +62,5 @@ class EventView(APIView):
         events = EventGetSerializer(events, many=True)
         return Response(events.data)
 
-@api_view
-def add_attendees(request, id):
-    event = Events.objects.get(id=id)
-    
-    event.attendees.add(request.user)
-
-    return Response({"msg": "Succefully accepted invite"})
+# @api_view()
+# def accept_invite(request, id):
