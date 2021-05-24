@@ -160,8 +160,9 @@ PASSWORD_HASHERS = [
 ]
 
 AUTHENTICATION_BACKENDS = (  
-  'drf_social_oauth2.backends.DjangoOAuth2',
-  'django.contrib.auth.backends.ModelBackend',
+    'social_core.backends.google.GoogleOAuth2',
+    'drf_social_oauth2.backends.DjangoOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
 )
 
 REST_FRAMEWORK = {
@@ -172,11 +173,17 @@ REST_FRAMEWORK = {
 }
 
 # JWT Refresh Token lifetime settings
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=90),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=95),
-    'ROTATE_REFRESH_TOKENS': True,
+# SIMPLE_JWT = {
+#     'ACCESS_TOKEN_LIFETIME': timedelta(days=90),
+#     'REFRESH_TOKEN_LIFETIME': timedelta(days=95),
+#     'ROTATE_REFRESH_TOKENS': True,
+# }
+
+OAUTH2_PROVIDER = {
+    'ACCESS_TOKEN_EXPIRE_SECONDS': 7184000,
+    'REFRESH_TOKEN_EXPIRE_SECONDS': 7184300,
 }
+
 
 # AWS S3 buckets settings
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'

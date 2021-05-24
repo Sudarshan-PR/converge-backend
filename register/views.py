@@ -9,12 +9,15 @@ from home.models import Profile
 
 class UserRegisterView(APIView):
     permission_classes = [permissions.AllowAny]
-    
+
     def post(self, request):
         serializer = UserRegisterSerializer(data=request.data)
 
         if serializer.is_valid():
             user = serializer.save()
+            
+            if not user:
+                return Response({'Error': "User registration was not successful"}, status=status.HTTP_400_BAD_REQUEST)
 
             # Create empty profile for the given user
             profile = Profile(user=user)
