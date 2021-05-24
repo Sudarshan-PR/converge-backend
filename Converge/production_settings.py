@@ -28,19 +28,32 @@ ALLOWED_HOSTS = [
 
 INSTALLED_APPS = [
     'django.contrib.admin',
+    'django.contrib.sessions',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.messages',
+    'django.contrib.staticfiles',
 
+    # Django geos
     'django.contrib.gis',
 
+    # Local apps
     'home',
     'register',
     'event',
 
+    # DRF
     'rest_framework',
+
+    # S3 Buckets 
     'storages',
+
+    # Social signin
+    'oauth2_provider',
+    'social_django',
+    'drf_social_oauth2',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -50,6 +63,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'Converge.urls'
@@ -65,6 +79,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # Social
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -129,11 +146,9 @@ REST_FRAMEWORK = {
     )
 }
 
-# JWT Refresh Token lifetime settings
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=90),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=95),
-    'ROTATE_REFRESH_TOKENS': True,
+OAUTH2_PROVIDER = {
+    'ACCESS_TOKEN_EXPIRE_SECONDS': 7184000,
+    'REFRESH_TOKEN_EXPIRE_SECONDS': 7184300,
 }
 
 # AWS S3 buckets settings
