@@ -173,7 +173,7 @@ SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.user.user_details',
     'register.save_profile_picture.save_profile', # This is the path of your pipeline.py
     #and get_avatar is the function.
-))
+)
 
 # AWS S3 buckets settings
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
