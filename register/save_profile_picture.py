@@ -1,5 +1,6 @@
 import home.models
 import tempfile
+import requests
 from django.core import files
 
 def save_profile(backend, user, response, is_new=False, *args, **kwargs):
