@@ -4,7 +4,7 @@ from django.core import files
 
 def save_profile(backend, user, response, is_new=False, *args, **kwargs):
     if backend.name == 'google-oauth2':
-        if is_new and response.get('picture'):
+        if response.get('picture'):
             image = requests.get(response['picture'], stream=True)
             
             # Create a temporary file
