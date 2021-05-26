@@ -1,6 +1,6 @@
 from django.utils import timezone
 from django.contrib.auth.base_user import BaseUserManager
-from home.models import Profile
+import home.models
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
@@ -26,7 +26,7 @@ class UserManager(BaseUserManager):
         user = self._create_user(email, password, **extra_fields)
 
         # Create empty profile for the given user
-        profile = Profile(user=user)
+        profile = home.models.Profile(user=user)
         profile.save()
 
         return user
