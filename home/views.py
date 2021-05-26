@@ -47,7 +47,7 @@ class ProfileView(APIView):
         try:
             loc = [profile.location.x, profile.location.y]
         except Exception as e:
-            loc = str(e)
+            loc = []
 
         profile = ProfileSerializer(profile)
         user = UserRegisterSerializer(request.user)
