@@ -19,9 +19,6 @@ class UserRegisterView(APIView):
             if not user:
                 return Response({'Error': "User registration was not successful"}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Create empty profile for the given user
-            profile = Profile(user=user)
-            profile.save()
 
             if user:
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
