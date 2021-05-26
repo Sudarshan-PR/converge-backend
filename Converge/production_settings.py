@@ -160,6 +160,8 @@ OAUTH2_PROVIDER = {
     'REFRESH_TOKEN_EXPIRE_SECONDS': 7184300,
 }
 
+SOCIAL_AUTH_PIPELINE+ = ('register.save_profile_picture.save_profile')
+
 # AWS S3 buckets settings
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
