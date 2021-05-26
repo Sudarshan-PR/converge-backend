@@ -22,7 +22,7 @@ class HelloView(APIView):
 
 
 class ProfileView(APIView):
-    permisson_classes = (IsAuthenticated,)
+    permisson_classes = [IsAuthenticated,]
 
     def put(self, request):
         data = request.data
