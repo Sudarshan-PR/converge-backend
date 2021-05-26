@@ -160,7 +160,20 @@ OAUTH2_PROVIDER = {
     'REFRESH_TOKEN_EXPIRE_SECONDS': 7184300,
 }
 
-SOCIAL_AUTH_PIPELINE += ('register.save_profile_picture.save_profile')
+SOCIAL_AUTH_PIPELINE = (
+
+    'social.pipeline.social_auth.social_details',
+    'social.pipeline.social_auth.social_uid',
+    'social.pipeline.social_auth.auth_allowed',
+    'social.pipeline.social_auth.social_user',
+    'social.pipeline.user.get_username',
+    'social.pipeline.user.create_user',
+    'social.pipeline.social_auth.associate_user',
+    'social.pipeline.social_auth.load_extra_data',
+    'social.pipeline.user.user_details',
+    'register.save_profile_picture.save_profile', # This is the path of your pipeline.py
+    #and get_avatar is the function.
+))
 
 # AWS S3 buckets settings
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
