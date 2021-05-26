@@ -19,7 +19,8 @@ Install PostGIS extension in PostgreSQL for Geo Objects support.
 | Path                	| Method 	| Purpose                              	| Params/Values                                      	|
 |---------------------	|--------	|--------------------------------------	|----------------------------------------------------	|
 | /api/register/      	| POST   	| Register a new user                  	| email, password, first_name, last_name             	|
-| /api/token/         	| POST   	| Get a pair of JWT tokens (Login)     	| email, password                                    	|
+| /api/token/         	| POST   	| Get a pair of JWT tokens (Login)     	| username, password, client_id, client_secret, grant_type  |
+| /api/convert-token    | POST      | Send google oauth2 access token to backend | token, backend: "google-oauth2", client_id, client_secret, grant_type: "convert_token"   |
 | /api/token/refresh/ 	| POST   	| Get new Access token (Token Refresh) 	| refresh                                            	|
 | /api/profile/       	| GET    	| Get profile data       	            | -                                                  	|
 | /api/profile/       	| PUT   	| Create/Update your profile            | image, dob(yyyy-mm-dd), bio, tags[array<str>], location[array<float>] 	|
@@ -29,9 +30,13 @@ Install PostGIS extension in PostgreSQL for Geo Objects support.
 | /api/event/          	| GET   	| Get all available events              | -                                                     | 
 | /api/post/          	| POST   	| Create a new post(blog thingy)       	| image, title, desc                                 	|
 
+To generate `client_id` and `client_secret` go to the admin page -> Application -> Add Application
+
 Parameters Description: _datatypes within sqared brackets[]_
 + `email`: Email address [string]
++ `username`: Email address [string]
 + `password`: 8+ characters [string]
++ `grant_type`: "password" when sending POST request to /api/token/ and "convert_token" when POSTing to /api/convert-token
 + `refresh`: Refresh token obtained after POST /api/token/ [string]
 + `image`: Image File to be uploaded [file]
 + `dob`: Date Of Birth. (yyyy-mm-dd) [date/string]
