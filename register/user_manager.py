@@ -27,8 +27,6 @@ class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
-        
-        logger.debug('Extra_fields in create_user: '+str(extra_fields))
 
         user = self._create_user(email, password, **extra_fields)
 

@@ -7,6 +7,9 @@ User = get_user_model()
 
 from event.models import Events 
 
+import logging
+
+logger = logging.getLogger('debug_logger')
 
 # Posts Model
 class Posts(models.Model):
@@ -28,3 +31,38 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.email
 
+
+#
+# Update profile picture on social login
+#
+from social_auth.backends import google
+from social_auth.signals import socialauth_registered
+def new_users_handler(sender, user, response, details, **kwargs):
+    user.is_new = True
+    if user.is_new:
+        if "id" in response:
+            
+            from urllib2 import urlopen, HTTPError
+            from django.template.defaultfilters import slugify
+            from django.core.files.base import ContentFile
+            
+            try:
+                if sender == google.GoogleOAuth2Backend and "picture" in response:
+                    url = response["picture"]
+    
+                if url:
+                    avatar = urlopen(url)
+                    profile = Profile.objects.get(user=user)
+                    
+                    logger.debug(f'Profile: {profile.__str__()} \n Image URL: {url}')
+
+                    profile.image.save(slugify(user.username + " social") + '.jpg', ContentFile(avatar.read()))              
+                                    
+                    profile.save()
+    
+            except HTTPError:
+                pass
+
+    return False
+
+socialauth_registered.connect(new_users_handler, sender=None)
