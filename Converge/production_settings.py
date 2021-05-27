@@ -193,3 +193,25 @@ django_heroku.settings(locals())
 
 # Set database engine to postgis
 DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
+
+# Loggers
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'debug_logger': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    },
+}

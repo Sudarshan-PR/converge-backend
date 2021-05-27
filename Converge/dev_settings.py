@@ -198,3 +198,25 @@ PUBLIC_MEDIA_LOCATION = 'media'
 
 # klkjlk
 DEFAULT_AUTO_FIELD='django.db.models.AutoField'
+
+# Loggers
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'debug_logger': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    },
+}

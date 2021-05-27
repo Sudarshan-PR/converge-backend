@@ -13,11 +13,15 @@ from .models import Profile, Posts
 from register.models import User
 from register.serializer import UserRegisterSerializer
 
+import logging
+
+logger = logging.getLogger('debug_logger')
+
 class HelloView(APIView):
     # permission_classes = (IsAuthenticated,)
-
     def get(self, request):
         content = {"msg": "Hello, you are in!"}
+        logger.debug("asdfasdfasfasdfasdf adfdafasdf hello")
         return Response(content)
 
 
