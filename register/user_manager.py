@@ -2,6 +2,10 @@ from django.utils import timezone
 from django.contrib.auth.base_user import BaseUserManager
 import home.models
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 class UserManager(BaseUserManager):
     use_in_migrations = True
 
@@ -23,6 +27,9 @@ class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
+        
+        logger.info('Extra_fields'+str(extra_fields))
+
         user = self._create_user(email, password, **extra_fields)
 
         # Create empty profile for the given user
