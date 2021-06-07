@@ -66,7 +66,22 @@ class EventView(APIView):
             if not(events):
                 return Response({'msg': f'Sorry there are no upcoming events.'})
 
+            loc = []
+            i = 0
+            for e in events:
+                try:
+                    loc[i] = {'lat': events.location.x, 'lon': events.location.y}
+                except Exception as e:
+                    loc[i] = {}
+                 i += 1
+                
             events = EventGetSerializer(events, many=True)
+
+            events = events.data
+            i = 0
+
+            for e in events:
+                e['location'] = loc[i]
         
         # View for a given event ID
         else:
@@ -75,8 +90,16 @@ class EventView(APIView):
             # If events is empty return
             if not(events):
                 return Response({'msg': f'Sorry there is no event for that id'}, status=status.HTTP_404_NOT_FOUND)
-            
+             
+            try:
+                loc = {'lat': events.location.x, 'lon': events.location.y}
+            except Exception as e:
+                loc = {}
+
             events = EventGetSerializer(events)
+            events = events.data
+
+            events['location'] = loc
 
         return Response(events.data)
 
