@@ -73,7 +73,7 @@ class EventView(APIView):
                     loc[i] = {'lat': events.location.x, 'lon': events.location.y}
                 except Exception as e:
                     loc[i] = {}
-                 i += 1
+                i += 1
                 
             events = EventGetSerializer(events, many=True)
 
