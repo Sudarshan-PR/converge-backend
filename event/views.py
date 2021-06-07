@@ -82,6 +82,7 @@ class EventView(APIView):
 
             for e in events:
                 e['location'] = loc[i]
+                i += 1
         
         # View for a given event ID
         else:
