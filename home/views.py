@@ -50,7 +50,7 @@ class ProfileView(APIView):
         profile = Profile.objects.get(user=request.user.id)        
         # Test is coordinates are present
         try:
-            loc = [profile.location.x, profile.location.y]
+            loc = {'lon': profile.location.x, 'lat': profile.location.y}
         except Exception as e:
             loc = []
 
@@ -86,6 +86,8 @@ def get_user_profile(request, userid):
     profile = ProfileSerializer(profile)
 
     profile = dict(profile.data, **user.data)
+
+    # Remove profile's coordinates
     del profile['location']
 
     return Response(profile)
