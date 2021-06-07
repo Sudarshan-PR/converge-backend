@@ -69,7 +69,7 @@ class EventView(APIView):
             loc = []
             for e in events:
                 try:
-                    loc.append({'lat': events.location.x, 'lon': events.location.y})
+                    loc.append({'lat': e.location.x, 'lon': e.location.y})
                 except Exception as e:
                     loc.append({})
                 
