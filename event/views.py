@@ -100,7 +100,7 @@ class EventView(APIView):
 
             events['location'] = loc
 
-        return Response(events.data)
+        return Response(events)
 
 @api_view(['POST'])
 def inviteView(request, id):
