@@ -12,6 +12,7 @@ from .serializers import ProfileSerializer, PostSerializer
 from .models import Profile, Posts
 from register.models import User
 from register.serializer import UserRegisterSerializer
+from event.models import Events
 
 import logging
 
@@ -64,13 +65,19 @@ class ProfileView(APIView):
 
         profile = dict(profile.data, **user.data)
         profile['location'] = loc 
-
+        
+        try:
+            profile['invites'] = str(Events.objects.filter(invites_sent__invited_users=1))
+        except ObjectDoesNotExist:
+            profile['invites'] = []
+        
         return Response(profile)
 
 @api_view()
 def get_user_profile(request, userid):
-    user = User.objects.get(id=userid)
+    user, profile = None, None
     try:
+        user = User.objects.get(id=userid)
         profile = Profile.objects.get(user=userid)
     except ObjectDoesNotExist:
         return Response({'error': f'Profile for UserID: {userid} does not exist'}, status=status.HTTP_404_NOT_FOUND)

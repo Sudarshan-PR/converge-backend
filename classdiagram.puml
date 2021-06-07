@@ -1,0 +1,118 @@
+@startuml
+!theme plain
+skinparam classAttributeIconSize 0
+
+class "User" as User {
+    -id (Int Field)
+    -password (Char Field)
+    -last_login (DateTime Field)
+    -is_superuser (Boolean Field)
+    -email (Email Field)
+    -username (Char Field)
+    -first_name (Char Field)
+    -last_name (Char Field)
+    -date_joined (DateTime Field)
+    --
+    +create()
+    +update()
+    +retrieve()
+    +delete()
+}
+
+class "Posts" as Posts {
+    -id (Int Field)
+    -user (Foreign Key - User)
+    -image (Image Field)
+    -title (Char Field)
+    -desc (Char Field)
+    --
+    +create()
+    +update()
+    +retrieve()
+    +delete()
+}
+Posts *-- User
+
+
+class "Profile" as Profile {
+    -id (Int Field)
+    -user (ForeignKey - User)
+    -image (Image Field)
+    -tags (Array Field)
+    -bio (Text Field)
+    -dob (Date Field)
+    -location (Point Field)
+    --
+    +create()
+    +update()
+    +retrieve()
+    +delete()
+    
+    #update_location()
+}
+Profile *-- User
+
+class "Events " as Events {
+    -id (Int Field)
+    -host (Foreign Key - User)
+    -title (Char Field)
+    -image (Image Field)
+    -tags (Array Field)
+    -desc (Text Field)
+    -create_date (Date Field)
+    -event_date (Date Field)
+    -location (Point Field)
+    -addr (Text Field)
+    -max_attendees (Integer Field)
+    -attendees (ManyToMany Field)
+    -invites_sent (ManyToMany Field)
+    --
+    +create_event()
+    +update_event()
+    +get_events()
+    +invite()
+    +accept_invite()
+    +get_attendees()
+    +remove_attendee()
+    +delete_event()
+}
+Events *-- User
+
+class "ChatRoom" as ChatRoom {
+    -id (Int Field)
+    -event (ForiegnKey Field - Event)
+    -room_name (Char Field)
+    -members (ManyToMany Field)
+    --
+    +createRoom()
+    +addUser()
+    +removeUser()
+    +sendMessage()
+    +deleteMessage()
+    
+    -setRoomHost()
+}
+
+together {
+  class Messages
+  class ChatRoom
+  class Events
+}
+Messages *-- ChatRoom
+Events --* ChatRoom
+
+class "Messages" as Messages {
+    -id (Int Field)
+    -room_name (ForiegnKey - User)
+    -message (Char Field)
+    -user (ForiegnKey - User)
+    -timestamp (DateTime Field)
+    --
+    +getMessage()
+    
+    #saveMessage()
+    #deleteMessage()
+    
+}
+
+@enduml

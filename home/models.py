@@ -26,7 +26,6 @@ class Profile(models.Model):
     bio = models.TextField(max_length=100, blank=True)
     dob = models.DateField(blank=True, null=True, auto_now=False, auto_now_add=False)
     location = models.PointField(blank=True, null=True)
-    invites = models.ManyToManyField(Events)
 
     def __str__(self):
         return self.user.email
@@ -35,34 +34,34 @@ class Profile(models.Model):
 #
 # Update profile picture on social login
 #
-from social_auth.backends import google
-from social_auth.signals import socialauth_registered
-def new_users_handler(sender, user, response, details, **kwargs):
-    user.is_new = True
-    if user.is_new:
-        if "id" in response:
+# from social_core.backends import google
+# from social_django.signals import socialauth_registereo
+# def new_users_handler(sender, user, response, details, **kwargs):
+#     user.is_new = True
+#     if user.is_new:
+#         if "id" in response:
             
-            from urllib2 import urlopen, HTTPError
-            from django.template.defaultfilters import slugify
-            from django.core.files.base import ContentFile
+#             from urllib2 import urlopen, HTTPError
+#             from django.template.defaultfilters import slugify
+#             from django.core.files.base import ContentFile
             
-            try:
-                if sender == google.GoogleOAuth2Backend and "picture" in response:
-                    url = response["picture"]
+#             try:
+#                 if sender == google.GoogleOAuth2Backend and "picture" in response:
+#                     url = response["picture"]
     
-                if url:
-                    avatar = urlopen(url)
-                    profile = Profile.objects.get(user=user)
+#                 if url:
+#                     avatar = urlopen(url)
+#                     profile = Profile.objects.get(user=user)
                     
-                    logger.debug(f'Profile: {profile.__str__()} \n Image URL: {url}')
+#                     logger.debug(f'Profile: {profile.__str__()} \n Image URL: {url}')
 
-                    profile.image.save(slugify(user.username + " social") + '.jpg', ContentFile(avatar.read()))              
+#                     profile.image.save(slugify(user.username + " social") + '.jpg', ContentFile(avatar.read()))              
                                     
-                    profile.save()
+#                     profile.save()
     
-            except HTTPError:
-                pass
+#             except HTTPError:
+#                 pass
 
-    return False
+#     return False
 
-socialauth_registered.connect(new_users_handler, sender=None)
+# socialauth_registered.connect(new_users_handler, sender=None)

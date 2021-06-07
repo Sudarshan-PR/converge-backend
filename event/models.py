@@ -11,6 +11,7 @@ User = get_user_model()
 class Events(models.Model):
     host = models.ForeignKey(User, on_delete=models.CASCADE)
     attendees = models.ManyToManyField(User, related_name='attending_users')
+    invites_sent = models.ManyToManyField(User, related_name='invited_users')
     title = models.CharField(blank=False, max_length=30)
     image = models.ImageField(blank=True)
     tags = ArrayField(models.CharField(max_length=15), blank=True, null=True)

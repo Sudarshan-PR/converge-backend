@@ -6,7 +6,7 @@ from .models import Events
 class EventCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Events
-        exclude = ['host','attendees']
+        exclude = ['host','attendees','invites_sent']
 
 
 class EventGetSerializer(serializers.ModelSerializer):

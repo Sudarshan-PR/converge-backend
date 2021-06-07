@@ -9,10 +9,12 @@ from rest_framework.permissions import IsAuthenticated
 from .models import Events
 from .serializers import EventCreateSerializer, EventGetSerializer
 
+from register.models import User
 
 class EventView(APIView):
     permisson_classes = (IsAuthenticated,)
 
+    # Create new event
     def post(self, request):
         data = request.data
 
@@ -25,6 +27,7 @@ class EventView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    # Update event
     def put(self, request):
         data = request.data
 
@@ -42,6 +45,7 @@ class EventView(APIView):
 
         return Response(serializer.errors)
 
+    # Accept Invite
     def patch(self, request, id):
         event = Events.objects.get(id=id)
             
@@ -50,17 +54,47 @@ class EventView(APIView):
         event = EventGetSerializer(event)
         return Response(event.data)
         
-    def get(self, request):
-        now = timezone.localdate()
+    # Get all events
+    def get(self, request, id=0):
+        # If no ID is specified
+        if id == 0:
+            now = timezone.localdate()
 
-        events = Events.objects.filter(event_date__gte=now).order_by('event_date')
+            events = Events.objects.filter(event_date__gte=now).order_by('event_date')
 
-        # If events is empty return
-        if not(events):
-            return Response({'msg': f'Sorry there are no upcoming events.'})
+            # If events is empty return
+            if not(events):
+                return Response({'msg': f'Sorry there are no upcoming events.'})
 
-        events = EventGetSerializer(events, many=True)
+            events = EventGetSerializer(events, many=True)
+        
+        # View for a given event ID
+        else:
+            events = Events.objects.get(id=id)
+            
+            # If events is empty return
+            if not(events):
+                return Response({'msg': f'Sorry there is no event for that id'}, status=status.HTTP_404_NOT_FOUND)
+            
+            events = EventGetSerializer(events)
+
         return Response(events.data)
 
-# @api_view()
-# def accept_invite(request, id):
+@api_view(['POST'])
+def inviteView(request, id):
+    userid = request.data['userid']
+    # return Response({'eventid': id, 'userid': userid})
+
+    event = Events.objects.get(id=id)
+
+    # Check if host sent the request
+    if request.user == event.host:
+        user = User.objects.get(id=userid)    
+        event.invites_sent.add(request.user)
+
+        return Response({'msg': "Successfully invited"})
+
+    return Response({'msg': "Action Not Allowed. You are not the host."}, status=status.HTTP_401_UNAUTHORIZED)
+
+    event = EventGetSerializer(event)
+    return Response(event.data)
