@@ -67,19 +67,17 @@ class EventView(APIView):
                 return Response({'msg': f'Sorry there are no upcoming events.'})
 
             loc = []
-            i = 0
             for e in events:
                 try:
-                    loc[i] = {'lat': events.location.x, 'lon': events.location.y}
+                    loc.append({'lat': events.location.x, 'lon': events.location.y})
                 except Exception as e:
-                    loc[i] = {}
-                i += 1
+                    loc.append({})
                 
             events = EventGetSerializer(events, many=True)
 
             events = events.data
-            i = 0
 
+            i = 0
             for e in events:
                 e['location'] = loc[i]
                 i += 1
