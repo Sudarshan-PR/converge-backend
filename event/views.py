@@ -69,7 +69,7 @@ class EventView(APIView):
             loc = []
             for e in events:
                 try:
-                    loc.append({'lon': e.location.x, 'lat': e.location.y})
+                    loc.append({'lon': e.location.y, 'lat': e.location.x})
                 except Exception as e:
                     loc.append({})
                 
@@ -91,7 +91,7 @@ class EventView(APIView):
                 return Response({'msg': f'Sorry there is no event for that id'}, status=status.HTTP_404_NOT_FOUND)
              
             try:
-                loc = {'lat': events.location.x, 'lon': events.location.y}
+                loc = {'lat': events.location.y, 'lon': events.location.x}
             except Exception as e:
                 loc = {}
 
