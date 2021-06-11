@@ -1,5 +1,7 @@
 from django.contrib.gis.geos import Point
+from django.contrib.gis.measure import Distance 
 from django.utils import timezone
+
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
@@ -59,8 +61,11 @@ class EventView(APIView):
         # If no ID is specified
         if id == 0:
             now = timezone.localdate()
+            # events = Events.objects.filter(event_date__gte=now).order_by('event_date')
 
-            events = Events.objects.filter(event_date__gte=now).order_by('event_date')
+            radius = 100
+            point = Profile.filter.get(user=request.user).location   
+            events = Events.objects.filter(location__distance_lt=(point, Distance(km=radius)), event_date__gte=now).order_by('event_date')
 
             # If events is empty return
             if not(events):
@@ -69,14 +74,15 @@ class EventView(APIView):
             loc = []
             for e in events:
                 try:
-                    loc.append({'lon': e.location.y, 'lat': e.location.x})
-                except Exception as e:
+                    loc.append({'lon': e.location.x 'lat': e.location.y})
+                except:
                     loc.append({})
                 
             events = EventGetSerializer(events, many=True)
 
             events = events.data
 
+            # Add event locations into each event's dict
             i = 0
             for e in events:
                 e['location'] = loc[i]
@@ -120,3 +126,8 @@ def inviteView(request, id):
 
     event = EventGetSerializer(event)
     return Response(event.data)
+
+
+@api_view(['GET'])
+def getRecommendation(request, id):
+    
