@@ -61,10 +61,17 @@ class EventView(APIView):
         # If no ID is specified
         if id == 0:
             now = timezone.localdate()
+
+            # Default search radius
+            radius = 150
+
+            # Set readius when param is given
+            if r := request.query_params.get("radius"):
+                radius = r
+        
             # events = Events.objects.filter(event_date__gte=now).order_by('event_date')
 
-            radius = 100
-            point = Profile.filter.get(user=request.user).location   
+            point = Profile.objects.get(user=request.user).location   
             events = Events.objects.filter(location__distance_lt=(point, Distance(km=radius)), event_date__gte=now).order_by('event_date')
 
             # If events is empty return
@@ -74,13 +81,11 @@ class EventView(APIView):
             loc = []
             for e in events:
                 try:
-                    loc.append({'lon': e.location.x 'lat': e.location.y})
+                    loc.append({'lon': e.location.x, 'lat': e.location.y})
                 except:
                     loc.append({})
                 
-            events = EventGetSerializer(events, many=True)
-
-            events = events.data
+            events = EventGetSerializer(events, many=True).data
 
             # Add event locations into each event's dict
             i = 0
@@ -97,8 +102,8 @@ class EventView(APIView):
                 return Response({'msg': f'Sorry there is no event for that id'}, status=status.HTTP_404_NOT_FOUND)
              
             try:
-                loc = {'lat': events.location.y, 'lon': events.location.x}
-            except Exception as e:
+                loc = {'lon': events.location.x, 'lat': events.location.y}
+            except:
                 loc = {}
 
             events = EventGetSerializer(events)
@@ -130,4 +135,25 @@ def inviteView(request, id):
 
 @api_view(['GET'])
 def getRecommendation(request, id):
+    radius = 50
+    point = Events.objects.get(id=id).location
+
+    # Get all events withing 50km of given eventID's radius
+    events = Events.objects.filter(location__distance_lt=(point, Distance(km=radius)), event_date__gte=now).order_by('event_date')
+
+    loc = []
+    for e in events:
+        try:
+            loc.append({'lon': e.location.x, 'lat': e.location.y})
+        except:
+            loc.append({})
+
+    events = EventGetSerializer(events, many=True).data
+
+    # Add event locations into each event's dict
+    i = 0
+    for e in events:
+        e['location'] = loc[i]
+        i += 1
     
+    return Response(events)
