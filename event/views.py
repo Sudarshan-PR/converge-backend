@@ -12,6 +12,7 @@ from .models import Events
 from .serializers import EventCreateSerializer, EventGetSerializer
 
 from register.models import User
+from home.models import Profile
 
 class EventView(APIView):
     permisson_classes = (IsAuthenticated,)
