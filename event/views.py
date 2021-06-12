@@ -1,4 +1,4 @@
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import Point, GEOSGeometry
 from django.contrib.gis.measure import Distance 
 from django.utils import timezone
 
@@ -68,17 +68,18 @@ class EventView(APIView):
 
             # Set readius when param is given
             if r := request.query_params.get("radius"):
-                radius = r
+                radius = int(r)
         
             # events = Events.objects.filter(event_date__gte=now).order_by('event_date')
 
-            point = Profile.objects.get(user=request.user).location   
-            events = Events.objects.filter(location__distance_lt=(point, Distance(km=radius)), event_date__gte=now).order_by('event_date')
+            point = Profile.objects.get(user=request.user.id).location
+            events = Events.objects.filter(location__distance_lte=(point, Distance(km=radius))).order_by('event_date')
 
             # If events is empty return
             if not(events):
-                return Response({'msg': f'Sorry there are no upcoming events.'})
+                return Response({'msg': f'Sorry there are no upcoming events within radius of {radius}kms from {point}.'})
 
+            # Store coordinates from models object
             loc = []
             for e in events:
                 try:
@@ -86,6 +87,7 @@ class EventView(APIView):
                 except:
                     loc.append({})
                 
+            # Serialize events QuerySet object to array of dicts
             events = EventGetSerializer(events, many=True).data
 
             # Add event locations into each event's dict
