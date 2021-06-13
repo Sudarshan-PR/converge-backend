@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import EventView, inviteView 
+from .views import EventView, inviteView, recommendationView 
 
 
 urlpatterns = [
@@ -7,4 +7,5 @@ urlpatterns = [
     path('<int:id>/', EventView.as_view(), name="event-get"),
     path('accept/<int:id>/', EventView.as_view(), name="accept-invite"),
     path('invite/<int:id>/', inviteView, name='invite-user'),
+    path('recommeded/', recommendationView, name='recommended')
 ]

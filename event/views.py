@@ -73,7 +73,11 @@ class EventView(APIView):
             # events = Events.objects.filter(event_date__gte=now).order_by('event_date')
 
             point = Profile.objects.get(user=request.user.id).location
-            events = Events.objects.filter(location__distance_lte=(point, Distance(km=radius))).order_by('event_date')
+
+            if point:
+                events = Events.objects.filter(location__distance_lte=(point, Distance(km=radius)), event_date__gte=now).order_by('event_date')
+            else:
+                events = Events.objects.filter(event_date__gte=now).order_by('event_date')
 
             # If events is empty return
             if not(events):
@@ -137,9 +141,21 @@ def inviteView(request, id):
 
 
 @api_view(['GET'])
-def getRecommendation(request, id):
+def recommendationView(request):
     radius = 50
+
+    id = request.query_params.get("event"):
+
+    if not(eventid):
+        return Response(
+            {
+                'msg': 'No event parameter was provided',
+                'solution': 'provide event_id as "id" in url parameter. Eg: /event/recommeded?event=13",
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
     point = Events.objects.get(id=id).location
+
 
     # Get all events withing 50km of given eventID's radius
     events = Events.objects.filter(location__distance_lt=(point, Distance(km=radius)), event_date__gte=now).order_by('event_date')
