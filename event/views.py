@@ -144,13 +144,13 @@ def inviteView(request, id):
 def recommendationView(request):
     radius = 50
 
-    id = request.query_params.get("event"):
+    id = request.query_params.get("event")
 
     if not(eventid):
         return Response(
             {
                 'msg': 'No event parameter was provided',
-                'solution': 'provide event_id as "id" in url parameter. Eg: /event/recommeded?event=13",
+                'solution': 'provide event_id as "id" in url parameter. Eg: /event/recommeded?event=13',
             },
             status=status.HTTP_400_BAD_REQUEST
         )
