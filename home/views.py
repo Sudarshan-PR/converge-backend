@@ -65,7 +65,7 @@ class ProfileView(APIView):
         invites = Events.objects.filter(invites_sent__invited_users=1)
         if invites:
             profile['invites'] = str(invites)
-        except ObjectDoesNotExist:
+        else:
             profile['invites'] = []
         
         return Response(profile)
