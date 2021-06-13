@@ -52,22 +52,19 @@ class ProfileView(APIView):
         try:
             loc = {'lon': profile.location.x, 'lat': profile.location.y}
         except Exception as e:
-            loc = []
+            loc = None
 
         profile = ProfileSerializer(profile)
         user = UserRegisterSerializer(request.user)
 
-        # Test if profile image exists
-        # try:
-        #     image = profile.image.url
-        # except:
-        #     image = None
-
+        # Note: As the 2 dicts are being merged, profile_ID is over-written by user_ID here
         profile = dict(profile.data, **user.data)
+
         profile['location'] = loc 
         
-        try:
-            profile['invites'] = str(Events.objects.filter(invites_sent__invited_users=1))
+        invites = Events.objects.filter(invites_sent__invited_users=1)
+        if invites:
+            profile['invites'] = str(invites)
         except ObjectDoesNotExist:
             profile['invites'] = []
         
