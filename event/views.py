@@ -57,12 +57,13 @@ class EventView(APIView):
             serializer = EventPatchSerializer(data=data)
 
             if serializer.is_valid():
-                saved = serializer.save(id)
+                event = serializer.save(id)
             
-                if saved:
+                if event:
+                    event = EventGetSerializer(event).data
                     return Response({
                         'msg': 'Fields Updated.',
-                        'Updated_Data': saved
+                        'event': event
                     })
                 else:
                     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
