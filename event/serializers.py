@@ -32,4 +32,4 @@ class EventPatchSerializer(serializers.ModelSerializer):
 
         event.save()
 
-        return self.data
+        return event
