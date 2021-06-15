@@ -30,6 +30,6 @@ class EventPatchSerializer(serializers.ModelSerializer):
 
             setattr(event, key, value)
 
-            event.save()
+        event.save()
 
-        return data
+        return event
