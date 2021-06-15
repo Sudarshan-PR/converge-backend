@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
 from .models import Events
-from .serializers import EventCreateSerializer, EventGetSerializer
+from .serializers import EventCreateSerializer, EventGetSerializer, EventPatchSerializer
 
 from register.models import User
 from home.models import Profile
@@ -48,15 +48,29 @@ class EventView(APIView):
 
         return Response(serializer.errors)
 
-    # Accept Invite
+    # Partial Updates
     def patch(self, request, id):
         event = Events.objects.get(id=id)
-            
-        event.attendees.add(request.user)
-
-        event = EventGetSerializer(event)
-        return Response(event.data)
         
+        if request.user == event.host:
+            data = request.data
+            serializer = EventPatchSerializer(data=data)
+
+            if serializer.is_valid():
+                saved = serializer.save(id)
+            
+                if saved:
+                    return Response({
+                        'msg': 'Fields Updated.',
+                        'Updated_Data': saved
+                    })
+                else:
+                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'msg': 'You are not the host. Only Hosts can send this request.'}, status=status.HTTP_401_UNAUTHORIZED)
+
     # Get all events
     def get(self, request, id=0):
         # If no ID is specified
@@ -84,10 +98,15 @@ class EventView(APIView):
                 return Response({'msg': f'Sorry there are no upcoming events within radius of {radius}kms from {point}.'})
 
             # Store coordinates from models object
+            host_image = []
+            host_name = []
             loc = []
-            for e in events:
+            for ev in events:
+                host_name.append(f'{ev.host.first_name} {ev.host.last_name}')
+                host_image.append(Profile.objects.get(user=ev.host).image.url)
+
                 try:
-                    loc.append({'lon': e.location.x, 'lat': e.location.y})
+                    loc.append({'lon': ev.location.x, 'lat': ev.location.y})
                 except:
                     loc.append({})
                 
@@ -96,8 +115,10 @@ class EventView(APIView):
 
             # Add event locations into each event's dict
             i = 0
-            for e in events:
-                e['location'] = loc[i]
+            for ev in events:
+                ev['host_name'] = host_name[i]
+                ev['host_image'] = host_image[i]
+                ev['location'] = loc[i]
                 i += 1
         
         # View for a given event ID
@@ -176,3 +197,12 @@ def recommendationView(request):
         i += 1
     
     return Response(events)
+
+# Accept Invite
+# def patch(self, request, id):
+    # event = Events.objects.get(id=id)
+        
+    # event.attendees.add(request.user)
+
+    # event = EventGetSerializer(event)
+    # return Response(event.data)
