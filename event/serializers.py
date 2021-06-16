@@ -4,11 +4,23 @@ from django.contrib.gis.geos import Point
 from .models import Events
 
 class EventCreateSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Events
         exclude = ['host','attendees','invites_sent']
 
+    def save(self, host):
+        data = self.validated_data
+        event = Events(host=host)
+
+        for key, value in data.items():
+            if key == 'location':
+                value = Point(value)
+
+            setattr(event, key, value)
+
+        event.save()
+
+        return event
 
 class EventGetSerializer(serializers.ModelSerializer):
     class Meta:

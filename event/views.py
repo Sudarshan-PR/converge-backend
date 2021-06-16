@@ -24,9 +24,10 @@ class EventView(APIView):
         serializer = EventCreateSerializer(data=data)
        
         if serializer.is_valid():
-            serializer.save(host=request.user)
-            
-            return Response(serializer.data)
+            event = serializer.save(host=request.user)
+            if(event):
+                serializer = EventGetSerializer(event)
+                return Response(serializer.data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
