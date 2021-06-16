@@ -12,7 +12,7 @@ from .serializers import ProfileSerializer, PostSerializer
 from .models import Profile, Posts
 from register.models import User
 from register.serializer import UserRegisterSerializer
-from event.serializers import EventCreateSerializer
+from event.serializers import EventCreateSerializer, EventGetSerializer
 from event.models import Events
 
 import logging
@@ -32,7 +32,10 @@ class HelloView(APIView):
         serializer = EventCreateSerializer(data=data)
        
         if serializer.is_valid():
-            return Response(serializer.data)
+            event = serializer.save(host=request.user)
+            if(event):
+                serializer = EventGetSerializer(event)
+                return Response(serializer.data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
