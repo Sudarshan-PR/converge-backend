@@ -12,6 +12,7 @@ from .serializers import ProfileSerializer, PostSerializer
 from .models import Profile, Posts
 from register.models import User
 from register.serializer import UserRegisterSerializer
+from event.serializers import EventCreateSerializer
 from event.models import Events
 
 import logging
@@ -25,6 +26,15 @@ class HelloView(APIView):
         logger.debug("asdfasdfasfasdfasdf adfdafasdf hello")
         return Response(content)
 
+    def post(self, request):
+        data = request.data
+
+        serializer = EventCreateSerializer(data=data)
+       
+        if serializer.is_valid():
+            return Response(serializer.data)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ProfileView(APIView):
     permisson_classes = [IsAuthenticated,]
