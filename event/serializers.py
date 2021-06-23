@@ -45,3 +45,6 @@ class EventPatchSerializer(serializers.ModelSerializer):
         event.save()
 
         return event
+
+class EventInviteSerializer(serializers.Serializer):
+    attendee = serializers.CharField()

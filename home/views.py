@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
-from .serializers import ProfileSerializer, PostSerializer
+from .serializers import ProfileSerializer, PostSerializer, PendingRequestsSerializer
 from .models import Profile, Posts
 from register.models import User
 from register.serializer import UserRegisterSerializer
@@ -75,11 +75,26 @@ class ProfileView(APIView):
 
         profile['location'] = loc 
         
-        invites = Events.objects.filter(invites_sent__invited_users=1)
-        if invites:
-            profile['invites'] = str(invites)
+        join_requests = Events.objects.filter(invites=request.user.id)
+        # join_requests = Events.objects.filter(invites__requesting_user=8)
+        if join_requests:
+            pending_requests = PendingRequestsSerializer(join_requests, many=True)
+            events = pending_requests.data
+            
+            pending_requests = []
+            for ev in events:
+                pending_requests.append({
+                    'id'    :   ev['id'],
+                    'title' :   ev['title'],
+                    'image' :   ev['image'],
+                    'addr'  :   ev['addr'],
+                })
+
+            profile['pending_requests'] = pending_requests
+            # profile['pending_requests'] = str(join_requests)
+
         else:
-            profile['invites'] = []
+            profile['pending_requests'] = []
         
         return Response(profile)
 

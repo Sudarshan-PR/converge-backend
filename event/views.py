@@ -74,9 +74,9 @@ class EventView(APIView):
             return Response({'msg': 'You are not the host. Only Hosts can send this request.'}, status=status.HTTP_401_UNAUTHORIZED)
 
     # Get all events
-    def get(self, request, id=0):
+    def get(self, request, id=False):
         # If no ID is specified
-        if id == 0:
+        if not(id):
             now = timezone.localdate()
 
             # Default search radius
@@ -105,22 +105,32 @@ class EventView(APIView):
             loc = []
             for ev in events:
                 host_name.append(f'{ev.host.first_name} {ev.host.last_name}')
-                host_image.append(Profile.objects.get(user=ev.host).image.url)
+
+                try:
+                    host_image.append(Profile.objects.get(user=ev.host).image.url)
+                except:
+                    host_image.append(None)
 
                 try:
                     loc.append({'lon': ev.location.x, 'lat': ev.location.y})
                 except:
-                    loc.append({})
+                    loc.append(None)
                 
             # Serialize events QuerySet object to array of dicts
             events = EventGetSerializer(events, many=True).data
-
+            
+            user = request.user.id
             # Add event locations into each event's dict
             i = 0
             for ev in events:
                 ev['host_name'] = host_name[i]
                 ev['host_image'] = host_image[i]
                 ev['location'] = loc[i]
+
+                # If not host delete invites from
+                if ev['host'] is not request.user.id:
+                    del ev['invites']
+
                 i += 1
         
         # View for a given event ID
@@ -141,23 +151,35 @@ class EventView(APIView):
 
             events['location'] = loc
 
+            if events['host'] is not request.user.id:
+                del events['invites']
+            else:
+                for invite in events['invites']:
+                    user = User.objects.get(id=invite)
+                    try:
+                        image = Profile.objects.get(user=user).image.url
+                    except:
+                        image = None
+
+                    invite = {
+                        'id': user.id,
+                        'first_name': user.first_name,
+                        'last_name': user.last_name,
+                        'image': image
+                    }
+
         return Response(events)
 
 @api_view(['POST'])
-def inviteView(request, id):
-    userid = request.data['userid']
-    # return Response({'eventid': id, 'userid': userid})
-
+def joinEventView(request, id):
+    user = request.user
     event = Events.objects.get(id=id)
 
-    # Check if host sent the request
-    if request.user == event.host:
-        user = User.objects.get(id=userid)    
-        event.invites_sent.add(request.user)
-
-        return Response({'msg': "Successfully invited"})
-
-    return Response({'msg': "Action Not Allowed. You are not the host."}, status=status.HTTP_401_UNAUTHORIZED)
+    try:
+        event.invites.add(user)
+        return Response({'msg': "Successfully sent request to join the event."})
+    except Exception as e:
+        return Response({'msg': f'Caught an exception. {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
 
     event = EventGetSerializer(event)
     return Response(event.data)
@@ -201,10 +223,10 @@ def recommendationView(request):
     return Response(events)
 
 # Accept Invite
-# def patch(self, request, id):
-    # event = Events.objects.get(id=id)
-        
-    # event.attendees.add(request.user)
+def accept_invite(self, request, id):
+    event = Events.objects.get(id=id)
+       
+    event.attendees.add(request.user)
 
-    # event = EventGetSerializer(event)
-    # return Response(event.data)
+    event = EventGetSerializer(event)
+    return Response(event.data)
