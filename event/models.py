@@ -11,7 +11,6 @@ User = get_user_model()
 class Events(models.Model):
     host = models.ForeignKey(User, on_delete=models.CASCADE)
     attendees = models.ManyToManyField(User, related_name='attending_users')
-    invites_sent = models.ManyToManyField(User, related_name='invited_users')
     title = models.CharField(blank=True, max_length=30)
     image = models.ImageField(blank=True)
     tags = ArrayField(models.CharField(max_length=15), blank=True, null=True)
@@ -21,6 +20,8 @@ class Events(models.Model):
     location = models.PointField(blank=True, null=True)
     addr = models.TextField(blank=True, max_length=100)
     max_attendees = models.IntegerField(blank=True, default=0)
+
+    invites = models.ManyToManyField(User, related_name="requesting_user")
 
     def __str__(self):
         return f'{self.host} : {self.title}'
