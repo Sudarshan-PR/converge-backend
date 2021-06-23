@@ -76,12 +76,12 @@ class ProfileView(APIView):
         profile['location'] = loc 
         
         join_requests = Events.objects.filter(invites=request.user.id)
-        # join_requests = Events.objects.filter(invites__requesting_user=8)
+
         if join_requests:
             pending_requests = PendingRequestsSerializer(join_requests, many=True)
             events = pending_requests.data
-            
             pending_requests = []
+
             for ev in events:
                 pending_requests.append({
                     'id'    :   ev['id'],
@@ -91,7 +91,6 @@ class ProfileView(APIView):
                 })
 
             profile['pending_requests'] = pending_requests
-            # profile['pending_requests'] = str(join_requests)
 
         else:
             profile['pending_requests'] = []

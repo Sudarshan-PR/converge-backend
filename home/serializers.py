@@ -23,6 +23,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
         return profile
 
+# Invites sent by user
 class PendingRequestsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Events
