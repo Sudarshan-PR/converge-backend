@@ -16,7 +16,7 @@ Install PostGIS extension in PostgreSQL for Geo Objects support.
 
 ##### Endpoints
 
-| Path                	| Method 	| Purpose                              	| Params/Values                                      	|
+| Path                	| Method 	| Purpose                              	| Data (Body)                                        	|
 |---------------------	|--------	|--------------------------------------	|----------------------------------------------------	|
 | /api/register/      	| POST   	| Register a new user                  	| email, password, first_name, last_name             	|
 | /api/token/         	| POST   	| Get a pair of JWT tokens (Login)     	| username, password, client_id, client_secret, grant_type  |
@@ -28,6 +28,7 @@ Install PostGIS extension in PostgreSQL for Geo Objects support.
 | /api/post/          	| POST   	| Create a new post(blog thingy)       	| image, title, desc                                 	|
 | /api/event/          	| POST   	| Create a new event                   	| image, title, desc, event_date(yyyy-mm-dd), addr, location[array<float>], tags[array<str>], max_attendees | 
 | /api/event/          	| GET   	| Get all available events              | -                                                     | 
+| /api/event/join/\<event\> | POST  | Join an event                         | -                                                     | 
 | /api/getRecommendation          	| GET   	| Get events within 50kms of a particular event              | event                                                     | 
 | /api/post/          	| POST   	| Create a new post(blog thingy)       	| image, title, desc                                 	|
 
