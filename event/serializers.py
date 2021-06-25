@@ -46,5 +46,5 @@ class EventPatchSerializer(serializers.ModelSerializer):
 
         return event
 
-class EventInviteSerializer(serializers.Serializer):
-    attendee = serializers.CharField()
+class EventAcceptSerializer(serializers.Serializer):
+    userid = serializers.IntegerField()
