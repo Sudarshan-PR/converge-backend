@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
 from .models import Events
-from .serializers import EventCreateSerializer, EventGetSerializer, EventPatchSerializer
+from .serializers import EventCreateSerializer, EventGetSerializer, EventPatchSerializer, EventAcceptSerializer
 
 from register.models import User
 from home.models import Profile
@@ -223,10 +223,23 @@ def recommendationView(request):
     return Response(events)
 
 # Accept Invite
-def accept_invite(self, request, id):
+@api_view(['POST'])
+def accept_invite(request, id):
     event = Events.objects.get(id=id)
        
-    event.attendees.add(request.user)
+    if event.host == request.user:
+        serializer = EventAcceptSerializer(data=request.data)
+        
+        if serializer.is_valid():
+            data = serializer.validated_data
+            user = User.objects.get(id=data['userid'])
+            event.attendees.add(user)
+            event.invites.remove(user)
 
-    event = EventGetSerializer(event)
-    return Response(event.data)
+            return Response({'msg': 'Join request accepted. User is now put into the attendees list.'}, status=status.HTTP_201_CREATED)
+
+        else:
+            return Response({'msg': 'Data provided was not valid. Make sure to send "user":id <int> in json or form data'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    else:
+        return Response({'msg': 'You are not the host. Only Hosts can send this request.'}, status=status.HTTP_401_UNAUTHORIZED)
