@@ -28,7 +28,8 @@ Install PostGIS extension in PostgreSQL for Geo Objects support.
 | /api/post/          	| POST   	| Create a new post(blog thingy)       	| image, title, desc                                 	|
 | /api/event/          	| POST   	| Create a new event                   	| image, title, desc, event_date(yyyy-mm-dd), addr, location[array<float>], tags[array<str>], max_attendees | 
 | /api/event/          	| GET   	| Get all available events              | -                                                     | 
-| /api/event/join/\<event\> | POST  | Join an event                         | -                                                     | 
+| /api/event/join/\<event-id\>      | POST  | Join an event                         | -                                                     | 
+| /api/event/accept/\<event-id\>    | POST  | Accept the join request                         | userid                                                     | 
 | /api/getRecommendation          	| GET   	| Get events within 50kms of a particular event              | event                                                     | 
 | /api/post/          	| POST   	| Create a new post(blog thingy)       	| image, title, desc                                 	|
 
