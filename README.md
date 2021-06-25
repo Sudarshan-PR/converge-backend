@@ -51,4 +51,4 @@ Parameters Description: _datatypes within sqared brackets[]_
 + `event_date`: Date with formate (yyyy-mm-dd)
 + `addr`: Address of event. [string]
 + `max_attendees`: Interger field [int]
-+ `event`: EventID [int]
++ `event-id`: EventID [int]
