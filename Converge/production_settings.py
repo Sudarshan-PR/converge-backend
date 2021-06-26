@@ -37,6 +37,9 @@ INSTALLED_APPS = [
     # Django geos
     'django.contrib.gis',
 
+    # Swagger
+    'drf_yasg',
+
     # Local apps
     'home',
     'register',
@@ -153,6 +156,8 @@ REST_FRAMEWORK = {
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',  
         'drf_social_oauth2.authentication.SocialAuthentication',
     )
+
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
 }
 
 OAUTH2_PROVIDER = {
