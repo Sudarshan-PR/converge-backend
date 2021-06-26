@@ -1,10 +1,12 @@
+import logging
+
 from django.contrib.gis.geos import Point, GEOSGeometry
 from django.contrib.gis.measure import Distance 
 from django.utils import timezone
 
 from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
@@ -13,6 +15,8 @@ from .serializers import EventCreateSerializer, EventGetSerializer, EventPatchSe
 
 from register.models import User
 from home.models import Profile
+
+logger = logging.getLogger('debug_logger')
 
 class EventView(APIView):
     permisson_classes = (IsAuthenticated,)
@@ -86,14 +90,12 @@ class EventView(APIView):
             if r := request.query_params.get("radius"):
                 radius = int(r)
         
-            # events = Events.objects.filter(event_date__gte=now).order_by('event_date')
-
             point = Profile.objects.get(user=request.user.id).location
 
             if point:
-                events = Events.objects.filter(location__distance_lte=(point, Distance(km=radius)), event_date__gte=now).order_by('event_date')
+                events = Events.objects.filter(location__distance_lte=(point, Distance(km=radius)), event_date__gte=now).exclude(host=request.user).order_by('event_date')
             else:
-                events = Events.objects.filter(event_date__gte=now).order_by('event_date')
+                events = Events.objects.filter(event_date__gte=now).exclude(host=request.user).order_by('event_date')
 
             # If events is empty return
             if not(events):
@@ -171,6 +173,7 @@ class EventView(APIView):
         return Response(events)
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def joinEventView(request, id):
     user = request.user
     event = Events.objects.get(id=id)
@@ -186,6 +189,7 @@ def joinEventView(request, id):
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def recommendationView(request):
     radius = 50
 
@@ -224,6 +228,7 @@ def recommendationView(request):
 
 # Accept Invite
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def accept_invite(request, id):
     event = Events.objects.get(id=id)
        
