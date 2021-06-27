@@ -191,11 +191,9 @@ def joinEventView(request, id):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def recommendationView(request):
-    radius = 50
-
     id = request.query_params.get("event")
 
-    if not(eventid):
+    if not(id):
         return Response(
             {
                 'msg': 'No event parameter was provided',
@@ -203,8 +201,14 @@ def recommendationView(request):
             },
             status=status.HTTP_400_BAD_REQUEST
         )
-    point = Events.objects.get(id=id).location
 
+    radius = request.query_params.get("radius")
+    # If radius not set, default radius
+    if not(radius):
+        radius = 50
+
+    # Get event's location
+    point = Events.objects.get(id=id).location
 
     # Get all events withing 50km of given eventID's radius
     events = Events.objects.filter(location__distance_lt=(point, Distance(km=radius)), event_date__gte=now).order_by('event_date')
