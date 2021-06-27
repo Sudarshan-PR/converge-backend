@@ -2,7 +2,6 @@ from rest_framework import serializers
 from django.contrib.gis.geos import Point
 
 from .models import Profile, Posts
-from event.models import Events
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -22,13 +21,6 @@ class ProfileSerializer(serializers.ModelSerializer):
         profile.save()
 
         return profile
-
-# Invites sent by user
-class PendingRequestsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Events
-        fields = '__all__'
-
 
 class PostSerializer(serializers.ModelSerializer):
     class Meta:

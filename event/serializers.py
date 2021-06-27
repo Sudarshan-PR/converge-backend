@@ -48,3 +48,9 @@ class EventPatchSerializer(serializers.ModelSerializer):
 
 class EventAcceptSerializer(serializers.Serializer):
     userid = serializers.IntegerField()
+
+# Invites sent by user
+class PendingRequestsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Events
+        fields = '__all__'
