@@ -124,6 +124,8 @@ class EventView(APIView):
                 
                 if ev in join_requests:
                     requested.append(True)
+                else:
+                    requested.append(False)
                 
             # Serialize events QuerySet object to array of dicts
             events = EventGetSerializer(events, many=True).data
