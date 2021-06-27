@@ -7,5 +7,5 @@ urlpatterns = [
     path('<int:id>/', EventView.as_view(), name="event-get"),
     path('accept/<int:id>/', accept_invite, name="accept-invite"),
     path('join/<int:id>/', joinEventView, name='join-event'),
-    path('recommeded/', recommendationView, name='recommended')
+    path('recommended/', recommendationView, name='recommended')
 ]
