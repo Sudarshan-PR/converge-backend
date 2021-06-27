@@ -8,11 +8,11 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
-from .serializers import ProfileSerializer, PostSerializer, PendingRequestsSerializer
+from .serializers import ProfileSerializer, PostSerializer
 from .models import Profile, Posts
 from register.models import User
 from register.serializer import UserRegisterSerializer
-from event.serializers import EventCreateSerializer, EventGetSerializer
+from event.serializers import PendingRequestsSerializer
 from event.models import Events
 
 import logging
@@ -25,19 +25,6 @@ class HelloView(APIView):
         content = {"msg": "Hello, you are in!"}
         logger.debug("asdfasdfasfasdfasdf adfdafasdf hello")
         return Response(content)
-
-    def post(self, request):
-        data = request.data
-
-        serializer = EventCreateSerializer(data=data)
-       
-        if serializer.is_valid():
-            event = serializer.save(host=request.user)
-            if(event):
-                serializer = EventGetSerializer(event)
-                return Response(serializer.data)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ProfileView(APIView):
     permisson_classes = [IsAuthenticated,]
