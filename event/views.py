@@ -101,14 +101,10 @@ class EventView(APIView):
             if not(events):
                 return Response({'msg': f'Sorry there are no upcoming events within radius of {radius}kms from {point}.'})
 
-            # All join requests sent by user
-            join_requests = Events.objects.filter(invites=request.user.id)
-
             # Store coordinates from models object
             host_image = []
             host_name = []
             loc = []
-            requested = []
             for ev in events:
                 host_name.append(f'{ev.host.first_name} {ev.host.last_name}')
 
@@ -122,11 +118,6 @@ class EventView(APIView):
                 except:
                     loc.append(None)
                 
-                if ev in join_requests:
-                    requested.append(True)
-                else:
-                    requested.append(False)
-                
             # Serialize events QuerySet object to array of dicts
             events = EventGetSerializer(events, many=True).data
             
@@ -137,7 +128,6 @@ class EventView(APIView):
                 ev['host_name'] = host_name[i]
                 ev['host_image'] = host_image[i]
                 ev['location'] = loc[i]
-                ev['requested'] = requested[i]
 
                 # If not host delete invites from
                 if ev['host'] is not request.user.id:
@@ -158,9 +148,18 @@ class EventView(APIView):
             except:
                 loc = {}
 
+            # All join requests sent by user
+            join_requests = Events.objects.filter(invites=request.user.id)
+            
+            if events in join_requests:
+                requested = True
+            else:
+                requested = False
+
             events = EventGetSerializer(events)
             events = events.data
 
+            events['requested'] = requested
             events['location'] = loc
 
             if events['host'] is not request.user.id:
