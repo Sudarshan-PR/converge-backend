@@ -1,5 +1,7 @@
 ## Converge
 
+![Converge Logo](/converge.png)
+
 Backend for the Converge Mobile App [College Project]
 
 - - - 
