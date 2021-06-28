@@ -3,6 +3,7 @@ import logging
 from django.contrib.gis.geos import Point, GEOSGeometry
 from django.contrib.gis.measure import Distance 
 from django.utils import timezone
+from django.core.exceptions import ObjectDoesNotExist
 
 from rest_framework import status
 from rest_framework.views import APIView
@@ -85,14 +86,25 @@ class EventView(APIView):
 
             # Default search radius
             radius = 150
+            interests = False
 
             # Set readius when param is given
             if r := request.query_params.get("radius"):
                 radius = int(r)
+
+            # Set interest when param is given
+            if i := request.query_params.get("interest"):
+                if i == "true":
+                    interests = Profile.objects.get(user=request.user).tags
         
             point = Profile.objects.get(user=request.user.id).location
 
-            if point:
+            # 
+            if point and interests:
+                events = Events.objects.filter(location__distance_lte=(point, Distance(km=radius)), event_date__gte=now, tags__contains=interests).exclude(host=request.user).order_by('event_date')
+            elif interests:
+                events = Events.objects.filter(event_date__gte=now, tags__contains=interests).exclude(host=request.user).order_by('event_date')
+            elif point:
                 events = Events.objects.filter(location__distance_lte=(point, Distance(km=radius)), event_date__gte=now).exclude(host=request.user).order_by('event_date')
             else:
                 events = Events.objects.filter(event_date__gte=now).exclude(host=request.user).order_by('event_date')
@@ -137,12 +149,11 @@ class EventView(APIView):
         
         # View for a given event ID
         else:
-            events = Events.objects.get(id=id)
+            try:
+                events = Events.objects.get(id=id)
+            except ObjectDoesNotExist:
+                return Response({'msg': f'Event for id: {id} Does Not Exist'}, status=status.HTTP_404_NOT_FOUND)
             
-            # If events is empty return
-            if not(events):
-                return Response({'msg': f'Sorry there is no event for that id'}, status=status.HTTP_404_NOT_FOUND)
-             
             try:
                 loc = {'lon': events.location.x, 'lat': events.location.y}
             except:
@@ -180,6 +191,7 @@ class EventView(APIView):
                     }
 
         return Response(events)
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -219,7 +231,10 @@ def recommendationView(request):
         radius = 50
 
     # Get event's location
-    point = Events.objects.get(id=id).location
+    try: 
+        point = Events.objects.get(id=id).location
+    except ObjectDoesNotExist:
+        return Response({'msg': 'Provided event ID is invalid. No events exist for the given ID.'}, status=status.HTTP_400_BAD_REQUEST)
 
     # Get all events withing 50km of given eventID's radius
     events = Events.objects.filter(location__distance_lt=(point, Distance(km=radius)), event_date__gte=now).order_by('event_date')
