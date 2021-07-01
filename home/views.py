@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.http import HttpResponse
 from django.contrib.gis.geos import Point
 from django.core.exceptions import ObjectDoesNotExist
@@ -12,7 +13,7 @@ from .serializers import ProfileSerializer, PostSerializer
 from .models import Profile, Posts
 from register.models import User
 from register.serializer import UserRegisterSerializer
-from event.serializers import PendingRequestsSerializer
+from event.serializers import PendingRequestsSerializer, EventGetSerializer
 from event.models import Events
 
 import logging
@@ -82,6 +83,37 @@ class ProfileView(APIView):
         else:
             profile['pending_requests'] = []
         
+        now = timezone.localdate()
+        hosted_events = Events.objects.filter(event_date__gte=now, host=request.user).order_by('event_date')
+        if hosted_events:
+            hosted_events_serializer = EventGetSerializer(hosted_events, many=True)
+            data = hosted_events_serializer.data
+
+            for ev,d in zip(hosted_events,data):
+                invites_quarySet = ev.invites.all()
+                if invites_quarySet:
+                    invites = []
+                    for user in invites_quarySet:
+                        try:
+                            image = Profile.objects.get(user=user).image.url
+                        except:
+                            image = None
+
+                        invites.append({
+                            'userid': user.id,
+                            'image': image,
+                            'name': f'{user.first_name} {user.last_name}'
+                        })
+                    
+                    d['invites'] = invites
+            
+
+            profile['hosted_events'] = data
+        
+        else:
+            profile['hosted_events'] = None
+
+
         return Response(profile)
 
 @api_view()
