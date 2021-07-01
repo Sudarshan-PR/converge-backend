@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'home',
     'register',
     'event',
+    'chat',
 
     # DRF
     'rest_framework',
