@@ -188,6 +188,7 @@ class EventView(APIView):
             if events['host'] is not request.user.id:
                 del events['invites']
             else:
+                i = 0
                 for invite in events['invites']:
                     user = User.objects.get(id=invite)
                     try:
@@ -195,12 +196,12 @@ class EventView(APIView):
                     except:
                         image = None
 
-                    invite = {
-                        'id': user.id,
-                        'first_name': user.first_name,
-                        'last_name': user.last_name,
+                    events['invites'][i] = {
+                        'userid': user.id,
+                        'name': f'{user.first_name} {user.last_name}',
                         'image': image
                     }
+                    i += 1
 
         return Response(events)
 
