@@ -35,6 +35,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # django-channels 
+    'channels',
+
     # Django geos
     'django.contrib.gis',
 
@@ -206,6 +209,19 @@ PUBLIC_MEDIA_LOCATION = 'media'
 
 # klkjlk
 DEFAULT_AUTO_FIELD='django.db.models.AutoField'
+
+ASGI_APPLICATION = 'Converge.asgi.application'
+
+# Channels Settings
+CHANNELS_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379)]  #[(os.getenv('REDIS_URL'), int(os.getenv('REDIS_PORT')))]
+        },
+    }
+}
+
 
 # Loggers
 LOGGING = {

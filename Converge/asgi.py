@@ -9,8 +9,26 @@ https://docs.djangoproject.com/en/3.1/howto/deployment/asgi/
 
 import os
 
+from channels.auth import AuthMiddlewareStack
+from channels.routing import ProtocolTypeRouter, URLRouter
 from django.core.asgi import get_asgi_application
+# import chat.router
+from . import router
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Converge.settings')
+if os.getenv("ENV") == "Heroku":
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Converge.production_settings')
+else:
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Converge.dev_settings')
 
-application = get_asgi_application()
+application = ProtocolTypeRouter({
+    # Handling HTTP Applications
+    "http": get_asgi_application(),
+
+    # Handling Websockets
+    "websocket": AuthMiddlewareStack(
+        URLRouter(
+            router.websocket_urlpatterns,
+        )
+    ),
+
+})
