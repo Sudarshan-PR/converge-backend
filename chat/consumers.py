@@ -3,6 +3,7 @@
 # import json
 # from chat.core.models.user import User
 # from chat.core.models.message import Message
+from urllib.parse import parse_qs
 
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
@@ -15,34 +16,13 @@ User = get_user_model()
 
 class ChatConsumer(JsonWebsocketConsumer):
     def connect(self):
-        self.accept()
-
-    def disconnect(self, close_code):
-        room_group_names = self.get_room_group_names(self.scope['user'])
-        for room in self.room_group_names:
-            async_to_sync(self.channel_layer.group_discard)(room, self.channel_name)
-
-        self.close()
-
-    def get_room_group_names(self, user):
-        events = Events.objects.filter(attendees=self.scope['user'])
-
-        room_group_names = [] 
-        for event in events: 
-            room_group_names.append(f'room_{event.id}')
-        
-        return room_group_names
-
-    def init(self, content):
         '''
-            What it does?
-                - Set user in scope and get his profile picture
-                - Add channel to groups of his attending events
-
-            Basically the initializing process before he can start sending and receiving msgs.
+            Get userid from URL Params and connect user if exists
         '''
+        quary_params = parse_qs(self.scope['query_string'].decode('utf8'))
+        userid = int(quary_params['userid'][-1])
         try:
-            user = User.objects.get(id=content['user']['_id'])
+            user = User.objects.get(id=userid)
 
             # Set user in scope
             self.scope['user'] = user
@@ -55,7 +35,11 @@ class ChatConsumer(JsonWebsocketConsumer):
                 self.avatar = None
 
         except Exception as e:
+            self.accept()
             self.send_json({'error': str(e)})
+            self.close()
+            
+            return
         
         self.room_group_names = self.get_room_group_names(user)
 
@@ -71,8 +55,33 @@ class ChatConsumer(JsonWebsocketConsumer):
                 self.channel_name
             )
 
-        self.send_json({'msg': f'Done Init at rooms: {str(self.room_group_names)}'})
+        self.accept()
+        self.send_json({'msg': f'Done connected to rooms: {str(self.room_group_names)}'})
+
+    def disconnect(self, close_code):
+        try:
+            for room in self.room_group_names:
+                async_to_sync(self.channel_layer.group_discard)(room, self.channel_name)
+        except:
+            pass
+        finally:
+            self.close()
+
+    def get_room_group_names(self, user):
+        try:
+            events = Events.objects.filter(attendees=self.scope['user'])
+        except TypeError as e:
+            self.send_json({'error from function': str(e)})
+            self.close()
+
+            return
+
+        room_group_names = [] 
+        for event in events: 
+            room_group_names.append(f'room_{event.id}')
         
+        return room_group_names
+
     def new_message(self, content):
         '''
             Send the new message to group
@@ -103,7 +112,6 @@ class ChatConsumer(JsonWebsocketConsumer):
         self.send_json(message)
 
     commands = {
-        'init': init,
         'new_message': new_message,
         'retrieve_messages': retrieve_messages,
     }
