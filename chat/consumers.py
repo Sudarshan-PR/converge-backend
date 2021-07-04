@@ -5,26 +5,23 @@
 # from chat.core.models.message import Message
 
 import json
-from channels.generic.websocket import WebsocketConsumer
+from channels.generic.websocket import JsonWebsocketConsumer
 
-class ChatConsumer(WebsocketConsumer):
+class ChatConsumer(JsonWebsocketConsumer):
     def connect(self):
         self.accept()
 
     def disconnect(self, close_code):
         pass
 
-    def receive(self, text_data):
-        text_data_json = json.loads(text_data)
+    def receive(self, content):
         user = self.scope['user']
 
-        self.send(text_data=json.dumps({
-            'message': text_data_json,
+        self.send({
+            'message': content,
             'channel_name': self.channel_layer,
             'user': str(user.__dict__)
-            })
-        )
-
+        })
 
 # class ChatConsumer(WebsocketConsumer):
 #     def init_chat(self, data):
