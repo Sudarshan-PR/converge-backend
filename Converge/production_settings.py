@@ -203,7 +203,7 @@ DEFAULT_AUTO_FIELD='django.db.models.AutoField'
 ASGI_APPLICATION = 'Converge.asgi.application'
 
 # Channels Settings
-CHANNELS_LAYERS = {
+CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
