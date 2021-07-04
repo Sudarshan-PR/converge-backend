@@ -12,16 +12,14 @@ class ChatConsumer(JsonWebsocketConsumer):
         self.accept()
 
     def disconnect(self, close_code):
-        pass
+        self.close()
 
-    def receive(self, content):
-        user = self.scope['user']
-
-        self.send({
-            'message': content,
-            'channel_name': self.channel_layer,
-            'user': str(user.__dict__)
-        })
+    def receive_json(self, content):
+        """
+        Called when a message is received with decoded JSON content
+        """
+        # Simple echo
+        self.send_json(content=content)
 
 # class ChatConsumer(WebsocketConsumer):
 #     def init_chat(self, data):
