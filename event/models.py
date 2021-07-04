@@ -24,7 +24,7 @@ class Events(models.Model):
     invites = models.ManyToManyField(User, related_name="requesting_user")
 
     def __str__(self):
-        return f'{self.host} : {self.title}'
+        return f'[{self.id}] {self.host} : {self.title}'
 
 # class Attendance(models.Model):
 #     event = models.ForeignKey(Events, on_delete=models.CASCADE, related_name='event')
