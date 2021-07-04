@@ -183,13 +183,6 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
 }
 
-# JWT Refresh Token lifetime settings
-# SIMPLE_JWT = {
-#     'ACCESS_TOKEN_LIFETIME': timedelta(days=90),
-#     'REFRESH_TOKEN_LIFETIME': timedelta(days=95),
-#     'ROTATE_REFRESH_TOKENS': True,
-# }
-
 OAUTH2_PROVIDER = {
     'ACCESS_TOKEN_EXPIRE_SECONDS': 7184000,
     'REFRESH_TOKEN_EXPIRE_SECONDS': 7184300,
@@ -217,7 +210,7 @@ CHANNELS_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            'hosts': [('127.0.0.1', 6379)]  #[(os.getenv('REDIS_URL'), int(os.getenv('REDIS_PORT')))]
+            'hosts': [os.getenv('REDIS_TLS_URL')]  #[(os.getenv('REDIS_URL'), int(os.getenv('REDIS_PORT')))]
         },
     }
 }
