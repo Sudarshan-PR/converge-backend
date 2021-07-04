@@ -4,22 +4,116 @@
 # from chat.core.models.user import User
 # from chat.core.models.message import Message
 
-import json
+from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
+
+from event.models import Events
+from home.models import Profile
+
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 class ChatConsumer(JsonWebsocketConsumer):
     def connect(self):
         self.accept()
 
     def disconnect(self, close_code):
+        room_group_names = self.get_room_group_names(self.scope['user'])
+        for room in self.room_group_names:
+            async_to_sync(self.channel_layer.group_discard)(room, self.channel_name)
+
         self.close()
 
+    def get_room_group_names(self, user):
+        events = Events.objects.filter(attendees=self.scope['user'])
+
+        room_group_names = [] 
+        for event in events: 
+            room_group_names.append(f'room_{event.id}')
+        
+        return room_group_names
+
+    def init(self, content):
+        '''
+            What it does?
+                - Set user in scope and get his profile picture
+                - Add channel to groups of his attending events
+
+            Basically the initializing process before he can start sending and receiving msgs.
+        '''
+        try:
+            user = User.objects.get(id=content['user']['_id'])
+
+            # Set user in scope
+            self.scope['user'] = user
+
+            # Get user's profile image
+            image = Profile.objects.get(user=user).image
+            if image:
+                self.avatar = image.url
+            else:
+                self.avatar = None
+
+        except Exception as e:
+            self.send_json({'error': str(e)})
+        
+        self.room_group_names = self.get_room_group_names(user)
+
+        # If no groups then return
+        if not(self.room_group_names):
+            self.send_json({'error': 'Not attending any events'})
+            return
+
+        for room in self.room_group_names:
+            # Join room group
+            async_to_sync(self.channel_layer.group_add)(
+                room,
+                self.channel_name
+            )
+
+        self.send_json({'msg': f'Done Init at rooms: {str(self.room_group_names)}'})
+        
+    def new_message(self, content):
+        '''
+            Send the new message to group
+        '''
+        # Populate content with user's name and profile picture
+        content['user']['name'] = f'{self.scope["user"].first_name} {self.scope["user"].last_name}'
+        content['user']['avatar'] = self.avatar
+
+        # Send content to group
+        async_to_sync(self.channel_layer.group_send)(
+            content['to'],
+            {
+                'type': 'chat.message',
+                'message': content
+            }
+        )
+
+    def retrieve_messages(self):
+        pass
+
+    def chat_message(self, event):
+        '''
+            Send message to sockets
+        '''
+        message = event['message']
+
+        # Send message to WebSocket
+        self.send_json(message)
+
+    commands = {
+        'init': init,
+        'new_message': new_message,
+        'retrieve_messages': retrieve_messages,
+    }
     def receive_json(self, content):
         """
-        Called when a message is received with decoded JSON content
+            Called when msg is received through the websocket.
+            content parameter is the decoded json body.
         """
-        # Simple echo
-        self.send_json(content=content)
+        
+        self.commands[content['command']](self, content)
 
 # class ChatConsumer(WebsocketConsumer):
 #     def init_chat(self, data):
