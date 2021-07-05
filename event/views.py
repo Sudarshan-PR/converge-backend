@@ -269,6 +269,14 @@ def recommendationView(request):
     
     return Response(events)
 
+# Attendings events
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def attending_events(request):
+    events = Events.objects.filter(attendees=request.user)
+    pass
+
+
 # Accept Invite
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
