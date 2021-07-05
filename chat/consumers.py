@@ -11,7 +11,8 @@ from channels.generic.websocket import JsonWebsocketConsumer
 from event.models import Events
 from home.models import Profile
 
-from datetime import datetime
+from django.utils import timezone
+
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
@@ -88,7 +89,7 @@ class ChatConsumer(JsonWebsocketConsumer):
             Send the new message to group
         '''
         # Populate content with user's name and profile picture
-        content['createdAt'] = datetime.now().isoformat()
+        content['createdAt'] = timezone.localtime().isoformat()
         content['user'] = {
             '_id': self.scope["user"].id,
             'name': f'{self.scope["user"].first_name} {self.scope["user"].last_name}',
