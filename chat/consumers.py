@@ -87,8 +87,11 @@ class ChatConsumer(JsonWebsocketConsumer):
             Send the new message to group
         '''
         # Populate content with user's name and profile picture
-        content['user']['name'] = f'{self.scope["user"].first_name} {self.scope["user"].last_name}'
-        content['user']['avatar'] = self.avatar
+        content['user'] = {
+            '_id': self.scope["user"].id,
+            'name': f'{self.scope["user"].first_name} {self.scope["user"].last_name}',
+            'avatar': self.avatar,
+        }
 
         # Send content to group
         async_to_sync(self.channel_layer.group_send)(
