@@ -56,4 +56,6 @@ urlpatterns = [
     path('api/', include('home.urls')),
 
     path('api/event/', include('event.urls')),
+    
+    path('api/chat/', include('chat.urls')),
 ]
