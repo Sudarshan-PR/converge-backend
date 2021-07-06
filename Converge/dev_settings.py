@@ -35,9 +35,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # django-channels 
-    'channels',
-
     # Django geos
     'django.contrib.gis',
 
@@ -200,20 +197,8 @@ AWS_S3_REGION_NAME = os.getenv('AWS_REGION_NAME')
 # Uploaded media path 
 PUBLIC_MEDIA_LOCATION = 'media'
 
-# klkjlk
+# Default feild in models
 DEFAULT_AUTO_FIELD='django.db.models.AutoField'
-
-ASGI_APPLICATION = 'Converge.asgi.application'
-
-# Channels Settings
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            'hosts': [os.getenv('REDIS_URL')]  #[(os.getenv('REDIS_URL'), int(os.getenv('REDIS_PORT')))]
-        },
-    }
-}
 
 
 # Loggers
