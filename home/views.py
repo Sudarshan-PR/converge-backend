@@ -113,6 +113,11 @@ class ProfileView(APIView):
         else:
             profile['hosted_events'] = None
 
+        attending_events = Events.objects.filter(attendees=request.user)
+        if attending_events:
+            profile['attending_events'] = EventGetSerializer(events, many=True).data
+        else:
+            profile['attending_events'] = None
 
         return Response(profile)
 
