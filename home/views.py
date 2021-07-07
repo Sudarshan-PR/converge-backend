@@ -136,7 +136,17 @@ def get_user_profile(request, userid):
     profile = ProfileSerializer(profile)
 
     profile = dict(profile.data, **user_serializer.data)
+    
+    # Events the user has hosted
+    now = timezone.now()
+    hosted_events = Events.objects.filter(event_date__gte=now, host=user).order_by('event_date')
+    if hosted_events:
+        hosted_events_serializer = EventGetSerializer(hosted_events, many=True)
+        profile['hosted_events'] = hosted_events_serializer.data
+    else:
+        profile['hosted_events'] = None
 
+    # Events the user is attending
     attending_events = Events.objects.filter(attendees=user)
     if attending_events:
         event_serializer = EventProfileSerializer(attending_events, many=True)
