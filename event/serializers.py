@@ -27,6 +27,11 @@ class EventGetSerializer(serializers.ModelSerializer):
         model = Events
         fields = '__all__'
 
+class EventProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Events
+        exclude = ['invites', 'location']
+
 class EventPatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Events
