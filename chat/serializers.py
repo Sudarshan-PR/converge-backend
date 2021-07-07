@@ -8,7 +8,7 @@ from event.models import Events
 class EventRoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Events
-        fields = ['id', 'title', 'image', 'host']
+        fields = ['id', 'title', 'image', 'host', 'attendees']
 
 
 class UserSerializer(serializers.ModelSerializer):
