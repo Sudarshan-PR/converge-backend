@@ -85,7 +85,7 @@ class EventView(APIView):
             now = timezone.localdate()
 
             # Default search radius
-            radius = 150
+            radius = False
             interests = False
 
             # Set readius when param is given
@@ -100,18 +100,20 @@ class EventView(APIView):
             point = Profile.objects.get(user=request.user.id).location
 
             # 
-            if point and interests:
+            if point and interests and radius:
                 events = Events.objects.filter(location__distance_lte=(point, Distance(km=radius)), event_date__gte=now, tags__contains=interests).exclude(host=request.user).order_by('event_date')
             elif interests:
                 events = Events.objects.filter(event_date__gte=now, tags__contains=interests).exclude(host=request.user).order_by('event_date')
-            elif point:
+            elif interests and radius and point:
+                events = Events.objects.filter(location__distance_lte=(point, Distance(km=radius)), event_date__gte=now, tags__contains=interests).exclude(host=request.user).order_by('event_date')
+            elif point and radius:
                 events = Events.objects.filter(location__distance_lte=(point, Distance(km=radius)), event_date__gte=now).exclude(host=request.user).order_by('event_date')
             else:
                 events = Events.objects.filter(event_date__gte=now).exclude(host=request.user).order_by('event_date')
 
             # If events is empty return
             if not(events):
-                return Response({'msg': f'Sorry there are no upcoming events within radius of {radius}kms from {point}.'})
+                return Response({'msg': f'Sorry there are no upcoming events within radius of {radius}kms from {point}. Interets:{interests}'})
 
             # Store coordinates from models object
             loc = []
