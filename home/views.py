@@ -130,10 +130,16 @@ def get_user_profile(request, userid):
     except ObjectDoesNotExist:
         return Response({'error': f'Profile for UserID: {userid} does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
-    user = UserRegisterSerializer(user)
+    user_serializer = UserRegisterSerializer(user)
     profile = ProfileSerializer(profile)
 
-    profile = dict(profile.data, **user.data)
+    profile = dict(profile.data, **user_serializer.data)
+
+    attending_events = Events.objects.filter(attendees=user)
+    if attending_events:
+        profile['attending_events'] = EventGetSerializer(events, many=True).data
+    else:
+        profile['attending_events'] = None
 
     # Remove profile's coordinates
     del profile['location']
