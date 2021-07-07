@@ -190,6 +190,10 @@ AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_KEY')
 AWS_STORAGE_BUCKET_NAME = os.getenv('S3_BUCKET_NAME')
 AWS_S3_REGION_NAME = os.getenv('AWS_REGION_NAME')
 
+# stream.io credentials
+STREAM_API_KEY = os.getenv("STREAM_API_KEY")
+STREAM_SECRET_KEY = os.getenv("STREAM_SECRET_KEY")
+
 # Uploaded media path 
 PUBLIC_MEDIA_LOCATION = 'media'
 
