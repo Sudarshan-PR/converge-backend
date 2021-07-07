@@ -13,7 +13,7 @@ from .serializers import ProfileSerializer, PostSerializer
 from .models import Profile, Posts
 from register.models import User
 from register.serializer import UserRegisterSerializer
-from event.serializers import PendingRequestsSerializer, EventGetSerializer
+from event.serializers import PendingRequestsSerializer, EventGetSerializer, EventProfileSerializer
 from event.models import Events
 
 import logging
@@ -115,7 +115,9 @@ class ProfileView(APIView):
 
         attending_events = Events.objects.filter(attendees=request.user)
         if attending_events:
-            profile['attending_events'] = EventGetSerializer(events, many=True).data
+            event_serializer = EventProfileSerializer(attending_events, many=True)
+
+            profile['attending_events'] = event_serializer.data
         else:
             profile['attending_events'] = None
 
@@ -137,7 +139,9 @@ def get_user_profile(request, userid):
 
     attending_events = Events.objects.filter(attendees=user)
     if attending_events:
-        profile['attending_events'] = EventGetSerializer(events, many=True).data
+        event_serializer = EventProfileSerializer(attending_events, many=True)
+
+        profile['attending_events'] = event_serializer.data
     else:
         profile['attending_events'] = None
 
