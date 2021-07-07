@@ -162,8 +162,9 @@ class PostsView(APIView):
         serializer = PostSerializer(data=data)
 
         if serializer.is_valid():
-            serializer.save()
-            currPost = Posts.objects.get(title=data['title'])
-            return Response({'title':currPost.title, 'image':str(currPost.image)})
+            post = serializer.save()
+            post_serializer = PostSerializer(post)
+
+            return Response(post_serializer.data)
 
         return Response(serializer.errors)
