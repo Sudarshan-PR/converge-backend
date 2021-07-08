@@ -35,7 +35,7 @@ class EventProfileSerializer(serializers.ModelSerializer):
 class EventPatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Events
-        exclude = ['host','attendees','invites_sent']
+        exclude = ['host','attendees', 'invites']
 
     def save(self, eventid):
         data = self.validated_data
