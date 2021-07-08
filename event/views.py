@@ -41,7 +41,8 @@ class EventView(APIView):
                 channel.update({
                     "name": f"{event_data['title']}",
                 })
-                
+                channel.add_moderators([str(event_data['host'])])
+
                 return Response(event_data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
