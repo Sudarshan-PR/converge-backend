@@ -32,8 +32,10 @@ Install PostGIS extension in PostgreSQL for Geo Objects support.
 | /api/event/          	| GET   	| Get all available events              | -                                                     | 
 | /api/event/join/\<event-id\>      | POST  | Join an event                         | -                                                     | 
 | /api/event/accept/\<event-id\>    | POST  | Accept the join request                         | userid                                                     | 
+| /api/event/reject/\<event-id\>    | POST  | Reject the join request                         | userid                                                     | 
 | /api/event/recommended          	| GET   	| Get events within 50kms of a particular event              | event                                                     | 
 | /api/post/          	| POST   	| Create a new post(blog thingy)       	| image, title, desc                                 	|
+| /api/chat/token/      | GET   	| Get stream token       	            |  -                               	|
 
 To generate `client_id` and `client_secret` go to the admin page -> Application -> Add Application
 
