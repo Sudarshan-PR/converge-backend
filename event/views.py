@@ -330,10 +330,6 @@ def reject_invite(request, id):
             user = User.objects.get(id=data['userid'])
             event.invites.remove(user)
 
-            # Add user to event's group chat
-            channel = chatClient.channel("messaging", f'{event.id}')
-            channel.add_members([f'{user.id}'])
-
             return Response({'msg': 'Join request accepted. User is now put into the attendees list.'}, status=status.HTTP_201_CREATED)
 
         else:
