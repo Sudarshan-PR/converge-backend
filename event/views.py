@@ -330,7 +330,7 @@ def reject_invite(request, id):
             user = User.objects.get(id=data['userid'])
             event.invites.remove(user)
 
-            return Response({'msg': 'Join request accepted. User is now put into the attendees list.'}, status=status.HTTP_201_CREATED)
+            return Response({'msg': 'Join request has been rejected. User is now removed from invites list.'}, status=status.HTTP_201_CREATED)
 
         else:
             return Response({'msg': 'Data provided was not valid. Make sure to send "user":id <int> in json or form data'}, status=status.HTTP_400_BAD_REQUEST)
