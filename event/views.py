@@ -1,9 +1,11 @@
 import logging
+from stream_chat import StreamChat
 
 from django.contrib.gis.geos import Point, GEOSGeometry
 from django.contrib.gis.measure import Distance 
 from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
+from django.conf import settings
 
 from rest_framework import status
 from rest_framework.views import APIView
@@ -19,13 +21,14 @@ from home.models import Profile
 
 logger = logging.getLogger('debug_logger')
 
+chatClient = StreamChat(api_key=settings.STREAM_API_KEY, api_secret=settings.STREAM_SECRET_KEY)
+
 class EventView(APIView):
     permisson_classes = (IsAuthenticated,)
 
 
     # Create new event
     def post(self, request):
-        from chat.views import client as chatClient
         data = request.data
 
         serializer = EventCreateSerializer(data=data)
@@ -37,7 +40,7 @@ class EventView(APIView):
 
                 # Create chat channel when event is created
                 channel = chatClient.channel("messaging", f'{event_data["id"]}')
-                channel.create(f'{event_data{"host"}}')
+                channel.create(f'{event_data["host"]}')
                 channel.update({
                     "name": f"{event_data['title']}",
                 })
@@ -299,6 +302,37 @@ def accept_invite(request, id):
             user = User.objects.get(id=data['userid'])
             event.attendees.add(user)
             event.invites.remove(user)
+
+            # Add user to event's group chat
+            channel = chatClient.channel("messaging", f'{event.id}')
+            channel.add_members([f'{user.id}'])
+
+            return Response({'msg': 'Join request accepted. User is now put into the attendees list.'}, status=status.HTTP_201_CREATED)
+
+        else:
+            return Response({'msg': 'Data provided was not valid. Make sure to send "user":id <int> in json or form data'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    else:
+        return Response({'msg': 'You are not the host. Only Hosts can send this request.'}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+# Reject an invite
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def reject_invite(request, id):
+    event = Events.objects.get(id=id)
+       
+    if event.host == request.user:
+        serializer = EventAcceptSerializer(data=request.data)
+        
+        if serializer.is_valid():
+            data = serializer.validated_data
+            user = User.objects.get(id=data['userid'])
+            event.invites.remove(user)
+
+            # Add user to event's group chat
+            channel = chatClient.channel("messaging", f'{event.id}')
+            channel.add_members([f'{user.id}'])
 
             return Response({'msg': 'Join request accepted. User is now put into the attendees list.'}, status=status.HTTP_201_CREATED)
 
