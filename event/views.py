@@ -62,7 +62,7 @@ class EventView(APIView):
                 event = serializer.save(id)
             
                 if event:
-                    event_data = EventGetSerializer(event)
+                    event_data = EventGetSerializer(event).data
 
                     # Update chat channel details when updated event
                     channel = chatClient.channel("messaging", f'{event_data["id"]}')
