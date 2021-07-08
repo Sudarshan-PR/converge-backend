@@ -22,8 +22,10 @@ logger = logging.getLogger('debug_logger')
 class EventView(APIView):
     permisson_classes = (IsAuthenticated,)
 
+
     # Create new event
     def post(self, request):
+        from chat.views import client as chatClient
         data = request.data
 
         serializer = EventCreateSerializer(data=data)
@@ -31,28 +33,18 @@ class EventView(APIView):
         if serializer.is_valid():
             event = serializer.save(host=request.user)
             if(event):
-                serializer = EventGetSerializer(event)
-                return Response(serializer.data)
+                event_data = EventGetSerializer(event).data
+
+                # Create chat channel when event is created
+                channel = chatClient.channel("messaging", f'{event_data["id"]}')
+                channel.create(f'{event_data{"host"}}')
+                channel.update({
+                    "name": f"{event_data['title']}",
+                })
+                
+                return Response(event_data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    # Update event
-    def put(self, request):
-        data = request.data
-
-        serializer = ProfileSerializer(data=data)
-       
-        if serializer.is_valid():
-            profile = serializer.save(request.user.id)
-            
-            profile = ProfileSerializer(profile)
-
-            msg = {'msg': 'Profile has been updated!','user': request.user.id}
-            resp = dict(profile.data, **msg)
-            
-            return Response(resp)
-
-        return Response(serializer.errors)
 
     # Partial Updates
     def patch(self, request, id):
@@ -66,10 +58,23 @@ class EventView(APIView):
                 event = serializer.save(id)
             
                 if event:
-                    event = EventGetSerializer(event)
+                    event_data = EventGetSerializer(event)
+
+                    # Update chat channel details when updated event
+                    channel = chatClient.channel("messaging", f'{event_data["id"]}')
+                    if event_data['image']:
+                        channel.update({
+                            "name": f"{event_data['title']}",
+                            "image": f"{event_data['image']}",
+                        })
+                    else:
+                        channel.update({
+                            "name": f"{event_data['name']}"
+                        })
+    
                     return Response({
                         'msg': 'Fields Updated.',
-                        'event': event.data
+                        'event': event_data
                     })
                 else:
                     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
