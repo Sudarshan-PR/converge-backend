@@ -163,8 +163,9 @@ def get_user_profile(request, userid):
 
 class PostsView(APIView):
     def get(self, request):
-        posts = Posts.objects.get(title="test 4")
-        return HttpResponse(f'<img src={posts.image.url} alt="Image not shown" ></img>')
+        posts = Posts.objects.all().order_by('created_date')
+        post_serializer = PostSerializer(posts, many=True)
+        return Response(post_serializer.data)
 
     def post(self, request):
         data = request.data
