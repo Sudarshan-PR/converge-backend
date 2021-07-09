@@ -164,16 +164,16 @@ def get_user_profile(request, userid):
 class PostsView(APIView):
     def get(self, request):
         posts = Posts.objects.all().order_by('created_date')
-        post_serializer = PostSerializer(posts, many=True)
-        return Response(post_serializer.data)
+        post_data = PostSerializer(posts, many=True).data
+
+        return Response(post_data)
 
     def post(self, request):
         data = request.data
-        data['user'] = request.user.id 
+        data['user'] = request.user.id
         serializer = PostSerializer(data=data)
-
         if serializer.is_valid():
-            post = serializer.save()
+            post = serializer.save(user=request.user)
             post_serializer = PostSerializer(post)
 
             return Response(post_serializer.data)
