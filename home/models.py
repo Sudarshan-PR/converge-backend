@@ -15,8 +15,7 @@ logger = logging.getLogger('debug_logger')
 class Posts(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     image = models.ImageField()
-    title = models.CharField(max_length=30)
-    desc = models.CharField(max_length=150)
+    caption = models.CharField(max_length=30)
 
 # User Profile Model
 class Profile(models.Model):
