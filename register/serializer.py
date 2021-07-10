@@ -12,16 +12,21 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
     password = serializers.CharField(min_length=8, write_only=True)
 
-    def create(self, validated_data):
+    def create(self, is_active=True):
         user = User.objects.create_user(
-            email=validated_data['email'],
-            password=validated_data['password'],
-            username=validated_data['email'],
-            first_name=validated_data['first_name'],
-            last_name=validated_data['last_name'],
+            email=self.validated_data['email'],
+            password=self.validated_data['password'],
+            username=self.validated_data['email'],
+            first_name=self.validated_data['first_name'],
+            last_name=self.validated_data['last_name'],
+            is_active=is_active
         )
         return user
 
     class Meta:
         model = User
         fields = ('id', 'email', 'password', 'first_name', 'last_name')
+
+class UserVerifySerializer(serializers.Serializer):
+    otp = serializers.IntegerField()
+    email = serializers.EmailField()

@@ -44,7 +44,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     is_active = models.BooleanField(
         _('active'),
-        default=True,
+        default=False,
         help_text=_(
             'Designates whether this user should be '
             'treated as active. Unselect this instead '
@@ -63,3 +63,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return f'[{self.id}] {self.email}'
         
+
+class UserVerifyToken(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    pincode = models.IntegerField(null=False, blank=False)
+    created = models.DateTimeField(auto_now=True, auto_now_add=False)
