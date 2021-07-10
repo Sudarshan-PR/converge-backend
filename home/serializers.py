@@ -28,6 +28,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField('get_user_name')
     user_image = serializers.SerializerMethodField('get_user_image')
+    host = serializers.SerializerMethodField('get_host')
 
     def get_user_name(self, obj):
         return f'{obj.user.first_name} {obj.user.last_name}'
@@ -38,6 +39,9 @@ class PostSerializer(serializers.ModelSerializer):
             return user_image.url
         else:
             return None
+
+    def get_host(self, obj):
+        return obj.user
 
     class Meta:
         model = Posts
