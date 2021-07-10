@@ -41,7 +41,7 @@ class PostSerializer(serializers.ModelSerializer):
             return None
 
     def get_host(self, obj):
-        return obj.user
+        return obj.user.id
 
     class Meta:
         model = Posts
