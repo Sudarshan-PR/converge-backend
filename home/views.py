@@ -163,7 +163,7 @@ def get_user_profile(request, userid):
 
 class PostsView(APIView):
     def get(self, request):
-        posts = Posts.objects.all().order_by('created_date')
+        posts = Posts.objects.all().order_by('-created_date')
         post_data = PostSerializer(posts, many=True).data
 
         return Response(post_data)
