@@ -66,7 +66,7 @@ class UserRegisterView(APIView):
             
             return Ressponse({'Error': "Something is wrong in the server. Please try again"}, status=status.HTTP_502_BAD_GATEWAY)
 
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             
 
 class UserVerifyView(APIView):
