@@ -57,13 +57,16 @@ class UserRegisterView(APIView):
                     data['msg'] = f'OTP has been sent to {data["email"]}'
 
                 except Exception as e:
+                    # Delete user created
+                    user.delete()
+
                     return Response(f'{str(e)}', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 
                 return Response(data, status=status.HTTP_201_CREATED)
             
-            return Response({'Error': "Something is wrong in the server. Please try again"}, status=status.HTTP_502_BAD_GATEWAY)
+            return Ressponse({'Error': "Something is wrong in the server. Please try again"}, status=status.HTTP_502_BAD_GATEWAY)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             
 
 class UserVerifyView(APIView):
@@ -89,9 +92,6 @@ class UserVerifyView(APIView):
 
             except Exception as e:
                 return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
-
-    
+        
+        else:
+            return Response(otp_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
