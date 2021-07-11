@@ -261,7 +261,7 @@ def recommendationView(request):
         return Response({'msg': 'Provided event ID is invalid. No events exist for the given ID.'}, status=status.HTTP_400_BAD_REQUEST)
 
     # Get all events withing 50km of given eventID's radius
-    events = Events.objects.filter(location__distance_lt=(point, Distance(km=radius)), event_date__gte=now).order_by('event_date')
+    events = Events.objects.filter(location__distance_lt=(point, Distance(km=radius)), event_date__gte=now).exclude(id=id).order_by('event_date')
 
     loc = []
     for e in events:
