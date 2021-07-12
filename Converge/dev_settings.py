@@ -59,6 +59,9 @@ INSTALLED_APPS = [
     'social_django',
     'drf_social_oauth2',
 
+    # Reset/Forgot Password
+    'django_rest_passwordreset',
+
     # Notification
     'exponent_server_sdk',
 
