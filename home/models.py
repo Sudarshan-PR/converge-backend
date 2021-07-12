@@ -15,7 +15,7 @@ logger = logging.getLogger('debug_logger')
 class Posts(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     image = models.ImageField(blank=True, null=True)
-    created_date = models.DateField(blank=True, auto_now=True, auto_now_add=False)
+    created_date = models.DateTimeField(blank=True, auto_now=True, auto_now_add=False)
     caption = models.CharField(max_length=30)
     tags = ArrayField(models.CharField(max_length=15), blank=True, null=True)
 
