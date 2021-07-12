@@ -9,7 +9,14 @@ class UserNotifications(models.Model):
     event = models.ForeignKey(Events, on_delete=models.CASCADE)
     msg = models.CharField(max_length=100, null=True, blank=True)
 
+    def __str__(self):
+        return f'{self.user}: {self.event.title}'
+    
+
 class ExpoToken(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     token = models.CharField(max_length=100, null=True, blank=True)
     active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f'{self.user} : {self.token} : {self.active}'
