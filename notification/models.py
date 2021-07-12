@@ -12,3 +12,4 @@ class UserNotifications(models.Model):
 class ExpoToken(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     token = models.CharField(max_length=100, null=True, blank=True)
+    active = models.BooleanField(default=True)
