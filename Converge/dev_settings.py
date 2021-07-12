@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'register',
     'event',
     'chat',
+    'notification',
 
     # DRF
     'rest_framework',
