@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.contrib.auth import get_user_model
 
 from rest_framework.decorators import api_view, permission_classes
@@ -17,7 +18,13 @@ def storeNotificationTokenView(request):
     
     if serializer.is_valid():
         data = serializer.validated_data
-        token, created = ExpoToken.objects.get_or_create(user=request.user, token=data['token'])
+
+        try:
+            ExpoToken.objects.get(token=data['token'])
+        except ObjectDoesNotExist:
+            ExpoToken.objects.create(user=request.user, token=data['token'])
+        except MultipleObjectsReturned:
+            pass
 
         return Response({'msg': 'Token stored'})
         
