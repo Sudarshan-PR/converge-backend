@@ -234,7 +234,7 @@ def joinEventView(request, id):
         title = 'Event'
         message = f'{user.first_name} {user.last_name} has requested to join {event.title}.'
         for token in tokens:
-            send_push_message(token, title=title, message=message)
+            send_push_message(token.token, title=title, message=message)
 
         return Response({'msg': "Successfully sent request to join the event."})
 
@@ -324,7 +324,7 @@ def accept_invite(request, id):
             title = 'Event'
             message = f'Your request to join {event.title} has been accepted.'
             for token in tokens:
-                send_push_message(token, title=title, message=message)
+                send_push_message(token.token, title=title, message=message)
 
             return Response({'msg': 'Join request accepted. User is now put into the attendees list.'}, status=status.HTTP_201_CREATED)
 
@@ -354,7 +354,7 @@ def reject_invite(request, id):
             title = 'Event'
             message = f'Your request to join {event.title} has been rejected.'
             for token in tokens:
-                send_push_message(token, title=title, message=message)
+                send_push_message(token.token, title=title, message=message)
 
             return Response({'msg': 'Join request has been rejected. User is now removed from invites list.'}, status=status.HTTP_201_CREATED)
 
