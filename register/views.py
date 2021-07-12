@@ -10,7 +10,7 @@ from rest_framework import status
 from rest_framework import permissions
 from rest_framework.decorators import api_view, permission_classes
 
-from .serializer import UserRegisterSerializer, UserVerifySerializer
+from .serializer import UserRegisterSerializer, UserVerifySerializer, ResetPasswordSerialzier
 
 from django.core.mail import EmailMessage
 
@@ -124,3 +124,15 @@ def resendOtpView(request):
 
     except Exception as e:
         return Response(f'{str(e)}', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# @api_view(['POST'])
+# def resetPassword(request):
+#     serializer = ResetPasswordSerialzier(data=request.data)
+#     if serializer.is_valid():
+#         data = serializer.validated_data
+#         link = ""
+#         email = EmailMessage("Converge Reset Password", f"Click on the below link to change your password. <br> {link} .", to=[f'{data['email']}'])
+#         email.send()
+
+#     else:
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

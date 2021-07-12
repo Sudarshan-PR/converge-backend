@@ -42,6 +42,10 @@ urlpatterns = [
     path('api/', include('rest_framework.urls')),
     path('api/', include('drf_social_oauth2.urls',namespace='drf')),
 
+    # Reset Password 
+    path('password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
+
+
     path('api/', include('home.urls')),
 
     path('api/event/', include('event.urls')),

@@ -30,3 +30,6 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 class UserVerifySerializer(serializers.Serializer):
     otp = serializers.IntegerField()
     email = serializers.EmailField()
+
+class ResetPasswordSerialzier(serializers.Serializer):
+    email = serializers.EmailField()
