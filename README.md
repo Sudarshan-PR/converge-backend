@@ -21,6 +21,8 @@ Install PostGIS extension in PostgreSQL for Geo Objects support.
 | Path                	| Method 	| Purpose                              	| Data (Body)                                        	|
 |---------------------	|--------	|--------------------------------------	|----------------------------------------------------	|
 | /api/register/      	| POST   	| Register a new user                  	| email, password, first_name, last_name             	|
+| /api/verifyemail/     | POST   	| Verify email with OTP                 | email, otp                                            |
+| /api/resend-otp/      | GET   	| Resend OTP to email                  	| email                                                 |
 | /api/token/         	| POST   	| Get a pair of JWT tokens (Login)     	| username, password, client_id, client_secret, grant_type  |
 | /api/convert-token    | POST      | Send google oauth2 access token to backend | token, backend: "google-oauth2", client_id, client_secret, grant_type: "convert_token"   |
 | /api/token/refresh/ 	| POST   	| Get new Access token (Token Refresh) 	| refresh                                            	|
