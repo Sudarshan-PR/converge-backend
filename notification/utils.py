@@ -4,7 +4,6 @@ from exponent_server_sdk import (
     DeviceNotRegisteredError,
     PushClient,
     PushMessage,
-    PushResponseError,
     PushServerError,
 ) 
 from requests.exceptions import ConnectionError, HTTPError
@@ -13,12 +12,15 @@ logger = logging.getLogger('debug_logger')
 
 # Basic arguments. You should extend this function with the push features you
 # want to use, or simply pass in a `PushMessage` object.
-def send_push_message(token, message, extra=None):
+def send_push_message(token, title, message, extra=None):
     try:
         response = PushClient().publish(
-            PushMessage(to=token,
-                        body=message,
-                        data=extra))
+            PushMessage(
+                to=token,
+                title= title,
+                body=message,
+                data=extra
+            ))
     except PushServerError as exc:
         # Encountered some likely formatting/validation error.
         logger.debug(str({
@@ -46,11 +48,10 @@ def send_push_message(token, message, extra=None):
         PushToken.objects.filter(token=token).update(active=False)
     except PushTicketError as exc:
         # Encountered some other per-notification error.
-        rollbar.report_exc_info(
-            extra_data={
-                'token': token,
-                'message': message,
-                'extra': extra,
-                'push_response': exc.push_response._asdict(),
-            })
+        logger.debug({
+            'token': token,
+            'message': message,
+            'extra': extra,
+            'push_response': exc.push_response._asdict(),
+        })
         raise self.retry(exc=exc)
