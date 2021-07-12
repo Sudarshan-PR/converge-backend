@@ -17,8 +17,7 @@ def storeNotificationTokenView(request):
     
     if serializer.is_valid():
         data = serializer.validated_data
-        token = ExpoToken(user=request.user, token=data['token'])
-        token.save()
+        token, created = ExpoToken.objects.get_or_create(user=request.user, token=data['token'])
 
         return Response({'msg': 'Token stored'})
         
