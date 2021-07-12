@@ -58,6 +58,9 @@ INSTALLED_APPS = [
     'social_django',
     'drf_social_oauth2',
 
+    # Notification
+    'exponent_server_sdk',
+
     'puml_generator',
 ]
 
