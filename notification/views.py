@@ -19,6 +19,8 @@ def storeNotificationTokenView(request):
         data = serializer.validated_data
         token = ExpoToken(user=request.user, token=data['token'])
         token.save()
+
+        return Response({'msg': 'Token stored'})
         
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
