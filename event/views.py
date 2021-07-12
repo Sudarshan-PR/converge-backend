@@ -19,6 +19,9 @@ from .serializers import EventCreateSerializer, EventGetSerializer, EventPatchSe
 from register.models import User
 from home.models import Profile
 
+from notification.utils import send_push_message
+from notification.models import ExpoToken
+
 logger = logging.getLogger('debug_logger')
 
 chatClient = StreamChat(api_key=settings.STREAM_API_KEY, api_secret=settings.STREAM_SECRET_KEY)
@@ -225,7 +228,16 @@ def joinEventView(request, id):
 
     try:
         event.invites.add(user)
+        
+        # Send notification to event host
+        tokens = ExpoToken.objects.filter(user=event.host, active=True)
+        title = 'Event'
+        message = f'{user.first_name} {user.last_name} has requested to join {event.title}.'
+        for token in tokens:
+            send_push_message(token, title=title, message=message)
+
         return Response({'msg': "Successfully sent request to join the event."})
+
     except Exception as e:
         return Response({'msg': f'Caught an exception. {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -307,6 +319,13 @@ def accept_invite(request, id):
             channel = chatClient.channel("messaging", f'{event.id}')
             channel.add_members([f'{user.id}'])
 
+            # Send notification to user that he got accepted
+            tokens = ExpoToken.objects.filter(user=user, active=True)
+            title = 'Event'
+            message = f'Your request to join {event.title} has been accepted.'
+            for token in tokens:
+                send_push_message(token, title=title, message=message)
+
             return Response({'msg': 'Join request accepted. User is now put into the attendees list.'}, status=status.HTTP_201_CREATED)
 
         else:
@@ -329,6 +348,13 @@ def reject_invite(request, id):
             data = serializer.validated_data
             user = User.objects.get(id=data['userid'])
             event.invites.remove(user)
+
+            # Send notification to user that he got accepted
+            tokens = ExpoToken.objects.filter(user=user, active=True)
+            title = 'Event'
+            message = f'Your request to join {event.title} has been rejected.'
+            for token in tokens:
+                send_push_message(token, title=title, message=message)
 
             return Response({'msg': 'Join request has been rejected. User is now removed from invites list.'}, status=status.HTTP_201_CREATED)
 
