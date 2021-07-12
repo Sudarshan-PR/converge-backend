@@ -26,7 +26,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-from register.views import UserRegisterView, UserVerifyView
+from register.views import UserRegisterView, UserVerifyView, resendOtpView
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -50,6 +50,7 @@ urlpatterns = [
     # path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/register/', UserRegisterView.as_view(), name='register_user'),
     path('api/verifyemail/', UserVerifyView.as_view(), name='verify_user'),
+    path('api/resend-otp/', resendOtpView, name='resend_OTP'),
 
     path('api/', include('rest_framework.urls')),
     path('api/', include('drf_social_oauth2.urls',namespace='drf')),

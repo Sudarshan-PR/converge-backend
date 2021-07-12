@@ -3,10 +3,13 @@ import math
 
 from django.shortcuts import render
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
+from rest_framework.decorators import api_view, permission_classes
+
 from .serializer import UserRegisterSerializer, UserVerifySerializer
 
 from django.core.mail import EmailMessage
@@ -95,3 +98,29 @@ class UserVerifyView(APIView):
         
         else:
             return Response(otp_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def resendOtpView(request):
+    query_email = request.query_params.get('email')
+    if not(query_email):
+        return Response({"error": "Please send email in URL parameter"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        user = User.objects.get(email=query_email)
+    except ObjectDoesNotExist as e:
+        return Response({"error": "Wrong email ID sent."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    otp = generateOTP()
+    user_verify = UserVerifyToken.objects.get(user=user)
+    
+    try:
+        email = EmailMessage("Converge Registration Verification", f"Your OTP for registration is {otp} .", to=[f'{user.email}'])
+        email.send()
+
+        user_verify.pincode = otp
+        user_verify.save()
+        
+        return Response({"msg": f'OTP has been sent to {query_email}'})
+
+    except Exception as e:
+        return Response(f'{str(e)}', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
