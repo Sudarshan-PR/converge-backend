@@ -10,7 +10,7 @@ from .models import ExpoToken
 
 User = get_user_model()
 
-@api_view(['GET'])
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def storeNotificationTokenView(request):
     serializer = ExpoTokenSerializer(data=request.data)
