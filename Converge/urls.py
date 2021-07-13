@@ -32,6 +32,7 @@ urlpatterns = [
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 
     path('admin/', admin.site.urls),
+    path('accounts/', include('django.contrib.auth.urls')),
 
     path('api/register/', UserRegisterView.as_view(), name='register_user'),
     path('api/verifyemail/', UserVerifyView.as_view(), name='verify_user'),
