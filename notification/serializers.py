@@ -6,9 +6,9 @@ class ExpoTokenSerializer(serializers.Serializer):
     token = serializers.CharField()
 
 class UserNotificationsSerializer(serializers.ModelField):
-    image = serializers.SerializerMethodField('get_image')
+    event_image = serializers.SerializerMethodField('get_event_image')
 
-    def get_image(self, obj):
+    def get_event_image(self, obj):
         if obj.event.image:
             return obj.event.image.url
         
