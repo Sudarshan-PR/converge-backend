@@ -13,7 +13,7 @@ from drf_yasg import openapi
 
 from register.views import UserRegisterView, UserVerifyView, resendOtpView
 
-from notification.views import storeNotificationTokenView
+from notification.views import storeNotificationTokenView, unsetNotificationTokenView
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -37,7 +37,9 @@ urlpatterns = [
     path('api/verifyemail/', UserVerifyView.as_view(), name='verify_user'),
     path('api/resend-otp/', resendOtpView, name='resend_OTP'),
 
+    # Expo Notification Tokens
     path('api/expotoken/', storeNotificationTokenView, name='expo_token_post'),
+    path('api/del-expotoken/', unsetNotificationTokenView, name='expo_token_del'),
     
     path('api/', include('rest_framework.urls')),
     path('api/', include('drf_social_oauth2.urls',namespace='drf')),

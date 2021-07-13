@@ -20,16 +20,39 @@ def storeNotificationTokenView(request):
         data = serializer.validated_data
 
         try:
-            ExpoToken.objects.get(user=request.user, token=data['token'])
+            token = ExpoToken.objects.get(user=request.user, token=data['token'])
+            # Set token as active
+            token.active = True
+            token.save()
         except ObjectDoesNotExist:
             ExpoToken.objects.create(user=request.user, token=data['token'])
         except MultipleObjectsReturned:
             pass
-
-        return Response({'msg': 'Token stored'})
+        finally:
+            return Response({'msg': 'Token stored'})
         
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def unsetNotificationTokenView(request):
+    serializer = ExpoTokenSerializer(data=request.data)
+    
+    if serializer.is_valid():
+        data = serializer.validated_data
+
+        try:
+            token = ExpoToken.objects.get(user=request.user, token=data['token'])
+            token.active = False
+            token.save()
+        except:
+            pass
+        finally:
+            return Response({'msg': f'Deviced set inactive to user {request.user.email}'})
+
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
