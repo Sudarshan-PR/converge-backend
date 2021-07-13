@@ -192,6 +192,8 @@ OAUTH2_PROVIDER = {
     'REFRESH_TOKEN_EXPIRE_SECONDS': 7184300,
 }
 
+# Domain Name
+DOMAIN_NAME = os.getenv('DOMAIN_NAME')
 
 # Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

@@ -189,6 +189,9 @@ SOCIAL_AUTH_PIPELINE = (
     #and get_avatar is the function.
 )
 
+# Domain Name
+DOMAIN_NAME = os.getenv('DOMAIN_NAME')
+
 # Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
