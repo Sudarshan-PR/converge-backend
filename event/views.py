@@ -20,7 +20,7 @@ from register.models import User
 from home.models import Profile
 
 from notification.utils import send_push_message
-from notification.models import ExpoToken
+from notification.models import ExpoToken, UserNotifications
 
 logger = logging.getLogger('debug_logger')
 
@@ -235,6 +235,10 @@ def joinEventView(request, id):
         message = f'{user.first_name} {user.last_name} has requested to join {event.title}.'
         for token in tokens:
             send_push_message(token.token, title=title, message=message)
+        
+        # Store notif in DB
+        notif = UserNotifications(user=event.host, event=event, msg=message)
+        notif.save()
 
         return Response({'msg': "Successfully sent request to join the event."})
 
@@ -326,6 +330,10 @@ def accept_invite(request, id):
             for token in tokens:
                 send_push_message(token.token, title=title, message=message)
 
+            # Store notif in DB
+            notif = UserNotifications(user=user, event=event, msg=message)
+            notif.save()
+
             return Response({'msg': 'Join request accepted. User is now put into the attendees list.'}, status=status.HTTP_201_CREATED)
 
         else:
@@ -355,6 +363,10 @@ def reject_invite(request, id):
             message = f'Your request to join {event.title} has been rejected.'
             for token in tokens:
                 send_push_message(token.token, title=title, message=message)
+            
+            # Store notif in DB
+            notif = UserNotifications(user=user, event=event, msg=message)
+            notif.save()
 
             return Response({'msg': 'Join request has been rejected. User is now removed from invites list.'}, status=status.HTTP_201_CREATED)
 
