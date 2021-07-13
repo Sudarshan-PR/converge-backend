@@ -57,7 +57,16 @@ def unsetNotificationTokenView(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getNotificationView(request):
-    notification = UserNotifications.objects.filter(user=request.user)
+    notification = UserNotifications.objects.filter(user=request.user).order_by('-created_at')
     serializer = UserNotificationsSerializer(notification, many=True)
 
-    return Response(serializer.data)
+    if not(serializer):
+        data = [{
+            "event": "Welcome to Converge!",
+            "msg": "You dont seem to have any notifications yet!",
+            "created-at": request.user.data_joined.isoformat()
+        }]
+    else:
+        data = serializer.data
+
+    return Response(data)

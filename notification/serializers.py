@@ -5,7 +5,7 @@ from .models import UserNotifications
 class ExpoTokenSerializer(serializers.Serializer):
     token = serializers.CharField()
 
-class UserNotificationsSerializer(serializers.ModelField):
+class UserNotificationsSerializer(serializers.ModelSerializer):
     event_image = serializers.SerializerMethodField('get_event_image')
 
     def get_event_image(self, obj):
