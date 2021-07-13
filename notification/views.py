@@ -6,8 +6,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
-from .serializers import ExpoTokenSerializer
-from .models import ExpoToken
+from .serializers import ExpoTokenSerializer, UserNotificationsSerializer
+from .models import ExpoToken, UserNotifications
 
 User = get_user_model()
 
@@ -20,7 +20,7 @@ def storeNotificationTokenView(request):
         data = serializer.validated_data
 
         try:
-            ExpoToken.objects.get(token=data['token'])
+            ExpoToken.objects.get(user=request.user, token=data['token'])
         except ObjectDoesNotExist:
             ExpoToken.objects.create(user=request.user, token=data['token'])
         except MultipleObjectsReturned:
@@ -30,3 +30,11 @@ def storeNotificationTokenView(request):
         
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getNotificationView(request):
+    notification = UserNotifications.objects.filter(user=request.user)
+    serializer = UserNotificationsSerializer(notification, many=True)
+
+    return Response(serializer.data)
