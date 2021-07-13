@@ -19,6 +19,10 @@ class Posts(models.Model):
     caption = models.CharField(max_length=30)
     tags = ArrayField(models.CharField(max_length=15), blank=True, null=True)
 
+    def __str__(self):
+        return f'{self.user} : {self.caption}'
+            
+
 # User Profile Model
 class Profile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -29,7 +33,7 @@ class Profile(models.Model):
     location = models.PointField(blank=True, null=True)
 
     def __str__(self):
-        return self.user.email
+        return f'{self.user.email} : {self.first_name}'
 
 
 #
