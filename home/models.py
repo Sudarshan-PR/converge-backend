@@ -33,7 +33,7 @@ class Profile(models.Model):
     location = models.PointField(blank=True, null=True)
 
     def __str__(self):
-        return f'{self.user.email} : {self.first_name}'
+        return f'{self.user.email} : {self.user.first_name}'
 
 
 #
