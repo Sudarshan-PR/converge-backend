@@ -8,9 +8,10 @@ class UserNotifications(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)    
     event = models.ForeignKey(Events, on_delete=models.CASCADE)
     msg = models.CharField(max_length=100, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now=True, auto_now_add=False)
 
     def __str__(self):
-        return f'{self.user}: {self.event.title}'
+        return f'[{self.created_at}] {self.user}: {self.event.title}'
     
 
 class ExpoToken(models.Model):
