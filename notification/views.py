@@ -51,6 +51,8 @@ def unsetNotificationTokenView(request):
             pass
         finally:
             return Response({'msg': f'Deviced set inactive to user {request.user.email}'})
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
