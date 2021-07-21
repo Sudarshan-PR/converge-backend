@@ -16,7 +16,7 @@ class Posts(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     image = models.ImageField(blank=True, null=True)
     created_date = models.DateTimeField(blank=True, auto_now=True, auto_now_add=False)
-    caption = models.CharField(max_length=30)
+    caption = models.CharField(max_length=100)
     tags = ArrayField(models.CharField(max_length=15), blank=True, null=True)
 
     def __str__(self):
