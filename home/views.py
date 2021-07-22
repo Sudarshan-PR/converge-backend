@@ -36,6 +36,11 @@ class ProfileView(APIView):
         serializer = ProfileSerializer(data=data)
        
         if serializer.is_valid():
+            dob = serializer.validated_data.get('dob')
+            # Check if date is in past
+            if dob != None and dob >= timezone.localtime().date():
+                return Response({'dob': "Date of Birth cannot be greater than or equal to current date."}, status=status.HTTP_400_BAD_REQUEST)
+            
             profile = serializer.save(request.user.id)
             
             profile = ProfileSerializer(profile)
