@@ -14,7 +14,7 @@ class Events(models.Model):
     title = models.CharField(blank=True, max_length=30)
     image = models.ImageField(blank=True)
     tags = ArrayField(models.CharField(max_length=15), blank=True, null=True)
-    desc = models.TextField(max_length=100, blank=True)
+    desc = models.TextField(max_length=500, blank=True)
     create_date = models.DateField(blank=True, auto_now=True, auto_now_add=False)
     event_date = models.DateField(blank=True, auto_now=False, auto_now_add=False)
     location = models.PointField(blank=True, null=True)
