@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 from stream_chat import StreamChat
 
 from django.contrib.gis.geos import Point, GEOSGeometry
@@ -37,6 +38,16 @@ class EventView(APIView):
         serializer = EventCreateSerializer(data=data)
        
         if serializer.is_valid():
+            event_date = serializer.validated_data['event_date']
+            # Check if date is in past
+            if event_date < timezone.localtime().date():
+                return Response({'event_date': "Event date cannot be lesser than current date."}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Check if max_attendees is greater than 0
+            if serializer.validated_data['max_attendees'] <= 0:
+                return Response({'max_attendees': "Max Attendees must be greater than 0."}, status=status.HTTP_400_BAD_REQUEST)
+
+
             event = serializer.save(host=request.user)
             if(event):
                 event_data = EventGetSerializer(event).data
