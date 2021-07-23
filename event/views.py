@@ -31,20 +31,22 @@ chatClient = StreamChat(api_key=settings.STREAM_API_KEY, api_secret=settings.STR
 def del_nonexist_chatrooms():
     events = Events.objects.all()
     deleted_channels = []
+    excpns = []
     max_id = 0
-    event_list = [ev.id for ev in event]
-
+    # List of event ids
+    event_list = [ev.id for ev in events]
     for ev in range(1, max(event_list)+1):
         if ev not in event_list:
             try:
                 channel = chatClient.channel('messaging', str(ev))
                 channel.delete()
                 deleted_channels.append(ev)
-
-                sleep(0.7)
-            except:
-                pass
-    print(f"Deleted channels : {deleted_channels}")
+                print(f"Deleted: {ev}")
+                sleep(2)
+            except Exception as e:
+                excpns.append(e)
+    print(f"All Deleted Channels : {deleted_channels}")
+    print(f"All Exceptions occured : {excpns}")
 
 
 
