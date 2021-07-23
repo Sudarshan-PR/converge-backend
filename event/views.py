@@ -1,3 +1,4 @@
+from time import sleep
 import logging
 from datetime import datetime
 from stream_chat import StreamChat
@@ -26,6 +27,31 @@ from notification.models import ExpoToken, UserNotifications
 logger = logging.getLogger('debug_logger')
 
 chatClient = StreamChat(api_key=settings.STREAM_API_KEY, api_secret=settings.STREAM_SECRET_KEY)
+
+def del_nonexist_chatrooms():
+    events = Events.objects.all()
+    deleted_channels = []
+    max_id = 0
+    event_list = [ev.id for ev in event]
+
+    for ev in range(1, max(event_list)+1):
+        if ev not in event_list:
+            try:
+                channel = chatClient.channel('messaging', str(ev))
+                channel.delete()
+                deleted_channels.append(ev)
+
+                sleep(0.7)
+            except:
+                pass
+    print(f"Deleted channels : {deleted_channels}")
+
+
+
+
+    
+    
+     
 
 class EventView(APIView):
     permisson_classes = (IsAuthenticated,)
