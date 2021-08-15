@@ -262,6 +262,7 @@ def joinEventView(request, id):
     try:
         event.invites.add(user)
         
+        message = f'{user.first_name} {user.last_name} has requested to join {event.title}.'
         # Store notif in DB
         notif = UserNotifications(user=event.host, event=event, msg=message)
         notif.save()
@@ -269,7 +270,6 @@ def joinEventView(request, id):
         # Send notification to event host
         tokens = ExpoToken.objects.filter(user=event.host, active=True)
         title = 'Event'
-        message = f'{user.first_name} {user.last_name} has requested to join {event.title}.'
         for token in tokens:
             send_push_message(token.token, title=title, message=message)
 
@@ -356,6 +356,7 @@ def accept_invite(request, id):
             channel = chatClient.channel("messaging", f'{event.id}')
             channel.add_members([f'{user.id}'])
 
+            message = f'Your request to join {event.title} has been accepted.'
             # Store notif in DB
             notif = UserNotifications(user=user, event=event, msg=message)
             notif.save()
@@ -363,7 +364,6 @@ def accept_invite(request, id):
             # Send notification to user that he got accepted
             tokens = ExpoToken.objects.filter(user=user, active=True)
             title = 'Event'
-            message = f'Your request to join {event.title} has been accepted.'
             for token in tokens:
                 send_push_message(token.token, title=title, message=message)
 
@@ -389,7 +389,8 @@ def reject_invite(request, id):
             data = serializer.validated_data
             user = User.objects.get(id=data['userid'])
             event.invites.remove(user)
-            
+
+            message = f'Your request to join {event.title} has been rejected.'
             # Store notif in DB
             notif = UserNotifications(user=user, event=event, msg=message)
             notif.save()
@@ -397,7 +398,6 @@ def reject_invite(request, id):
             # Send notification to user that he got accepted
             tokens = ExpoToken.objects.filter(user=user, active=True)
             title = 'Event'
-            message = f'Your request to join {event.title} has been rejected.'
             for token in tokens:
                 send_push_message(token.token, title=title, message=message)
 
