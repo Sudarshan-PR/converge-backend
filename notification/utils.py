@@ -44,7 +44,7 @@ def send_push_message(token, title, message, extra=None):
         response.validate_response()
     except DeviceNotRegisteredError:
         # Mark the push token as inactive
-        from notifications.models import ExpoToken
+        from .models import ExpoToken
         ExpoToken.objects.filter(token=token).update(active=False)
     except PushTicketError as exc:
         # Encountered some other per-notification error.

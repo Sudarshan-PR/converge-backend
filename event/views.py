@@ -49,12 +49,6 @@ def del_nonexist_chatrooms():
     print(f"All Exceptions occured : {excpns}")
 
 
-
-
-    
-    
-     
-
 class EventView(APIView):
     permisson_classes = (IsAuthenticated,)
 
@@ -268,16 +262,16 @@ def joinEventView(request, id):
     try:
         event.invites.add(user)
         
+        # Store notif in DB
+        notif = UserNotifications(user=event.host, event=event, msg=message)
+        notif.save()
+        
         # Send notification to event host
         tokens = ExpoToken.objects.filter(user=event.host, active=True)
         title = 'Event'
         message = f'{user.first_name} {user.last_name} has requested to join {event.title}.'
         for token in tokens:
             send_push_message(token.token, title=title, message=message)
-        
-        # Store notif in DB
-        notif = UserNotifications(user=event.host, event=event, msg=message)
-        notif.save()
 
         return Response({'msg': "Successfully sent request to join the event."})
 
@@ -362,16 +356,16 @@ def accept_invite(request, id):
             channel = chatClient.channel("messaging", f'{event.id}')
             channel.add_members([f'{user.id}'])
 
+            # Store notif in DB
+            notif = UserNotifications(user=user, event=event, msg=message)
+            notif.save()
+
             # Send notification to user that he got accepted
             tokens = ExpoToken.objects.filter(user=user, active=True)
             title = 'Event'
             message = f'Your request to join {event.title} has been accepted.'
             for token in tokens:
                 send_push_message(token.token, title=title, message=message)
-
-            # Store notif in DB
-            notif = UserNotifications(user=user, event=event, msg=message)
-            notif.save()
 
             return Response({'msg': 'Join request accepted. User is now put into the attendees list.'}, status=status.HTTP_201_CREATED)
 
@@ -395,6 +389,10 @@ def reject_invite(request, id):
             data = serializer.validated_data
             user = User.objects.get(id=data['userid'])
             event.invites.remove(user)
+            
+            # Store notif in DB
+            notif = UserNotifications(user=user, event=event, msg=message)
+            notif.save()
 
             # Send notification to user that he got accepted
             tokens = ExpoToken.objects.filter(user=user, active=True)
@@ -402,10 +400,6 @@ def reject_invite(request, id):
             message = f'Your request to join {event.title} has been rejected.'
             for token in tokens:
                 send_push_message(token.token, title=title, message=message)
-            
-            # Store notif in DB
-            notif = UserNotifications(user=user, event=event, msg=message)
-            notif.save()
 
             return Response({'msg': 'Join request has been rejected. User is now removed from invites list.'}, status=status.HTTP_201_CREATED)
 
